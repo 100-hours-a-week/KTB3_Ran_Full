@@ -27,6 +27,7 @@ public class PostRepository {
         postDto.setPostTitle(postCreateFormDto.getTitle());
         postDto.setPostContent(postCreateFormDto.getContent());
         postDto.setPostAuthor(userDto.getUserId());//userid 가져와야됨.
+        postDto.setPostDate();
         Posts.put(postDto.getPostId(),postDto);
         index++;//행 갱신
         return postDto;
