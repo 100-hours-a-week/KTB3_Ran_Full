@@ -4,6 +4,7 @@ import com.ran.community.user.dto.UserDto;
 import com.ran.community.user.dto.UserLoginDto;
 import com.ran.community.user.dto.UserSignupFormDto;
 import com.ran.community.user.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +39,10 @@ public class UserController {
 
     //로그인
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody UserLoginDto userLoginDto){
+    public ResponseEntity<?> login(@Valid @RequestBody UserLoginDto userLoginDto, HttpSession httpSession){
         UserDto userDto = userService.login(userLoginDto);
+        //로그인 성공 시 세션에 유저 정보 저장해야됨!!
+        httpSession.setAttribute("userId",userDto.getUserId());
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","login_success","data",Map.of("userId",userDto.getUserId())));
     }
 
