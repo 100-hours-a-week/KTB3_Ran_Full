@@ -55,11 +55,11 @@ public class PostDto {
     }
 
     public LocalDateTime getPostDate() {
-        return LocalDateTime.now();
+        return postDate;
     }
 
-    public void setPostDate(LocalDateTime postDate) {
-        this.postDate = postDate;
+    public void setPostDate() {
+        this.postDate = LocalDateTime.now();
     }
 
     public String getPostImageUrl() {
