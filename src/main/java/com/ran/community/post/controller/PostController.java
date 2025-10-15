@@ -1,5 +1,7 @@
 package com.ran.community.post.controller;
 
+import com.ran.community.like.dto.LikeDto;
+import com.ran.community.like.service.LikeService;
 import com.ran.community.post.dto.PageDto;
 import com.ran.community.post.dto.PostCreateFormDto;
 import com.ran.community.post.dto.PostDto;
@@ -13,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RequestMapping("/posts")
@@ -21,11 +22,13 @@ import java.util.Map;
 public class PostController {
     private final UserService userService;
     private final PostService postService;
+    private final LikeService likeService;
 
     @Autowired
-    public PostController(PostService postService, UserService userService) {
+    public PostController(PostService postService, UserService userService, LikeService likeService) {
         this.postService = postService;
         this.userService = userService;
+        this.likeService = likeService;
     }
 
     //게시물 생성
@@ -68,6 +71,30 @@ public class PostController {
     public ResponseEntity<?> deletePost(@PathVariable Long postId){
         PostDto postDto = postService.deletePost(postId);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","posts_delete_success","data",postDto));
+    }
+
+    //특정 게시물의 좋아요 생성 및 삭제
+    @PostMapping("/{postId}/likes")
+    public ResponseEntity<?> like(@PathVariable Long postId, HttpSession session) {
+        long userId = (long) session.getAttribute("userId");
+        LikeDto like = likeService.addLike(userId,postId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message","like_create_success","data",like));
+    }
+
+    //특정 게시물의 좋아요 삭제
+    @DeleteMapping("/{postId}/likes")
+    public ResponseEntity<?> unlike(@PathVariable Long postId, HttpSession session) {
+        long userId = (long) session.getAttribute("userId");
+        LikeDto like = likeService.removeLike(userId,postId);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","unlike_success","data",like));
+
+    }
+
+    //특정 게시물의 좋아요 조회
+    @GetMapping("/{postId}/likes")
+    public ResponseEntity<?> getLikes(@PathVariable Long postId) {
+        int likeCount = likeService.getCountLike(postId);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","like_read_success","data",likeCount));
     }
 
 }
