@@ -9,16 +9,16 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class UserRepository {
     //db를 대신하여 dto를 repository로 map으로 users db를 만드는 거구나.
-    private long index; //인덱스를 담당
-    private Map<Long, UserDto> Users = new LinkedHashMap<>(); //유저 객체를 담는 DB
+    private AtomicLong index = new AtomicLong(0); //인덱스를 담당
+    private Map<Long, UserDto> Users = new ConcurrentHashMap<>(); //유저 객체를 담는 DB
 
-    public UserRepository() {
-        this.index = 0;
-    }
+
 
     //특정 유저 가져오기
     public Optional<UserDto> getUser(long userId) {
@@ -31,12 +31,11 @@ public class UserRepository {
         //DI에 해치지 않을까?
         // -> 용도는 폼에서 생성된 객체와 분리되기 때문에, 실제 user entity는 만들어지지 않음
 
-        userDto.setUserId(index);
+        userDto.setUserId(index.getAndIncrement());//값 반환 후 index 증가;
         userDto.setPassword(userSignupFormDto.getPassword());
         userDto.setUsername(userSignupFormDto.getUsername());
         userDto.setEmail(userSignupFormDto.getEmail());
         Users.put(userDto.getUserId(), userDto);
-        index++;//행 갱신
         return userDto;
     }
 
