@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.*;
 
-@RestControllerAdvice //전역적 에러 처리
+//@RestControllerAdvice //전역적 에러 처리
 public class GlobalExceptionHandler {
 
     //유효성 검사 validation
