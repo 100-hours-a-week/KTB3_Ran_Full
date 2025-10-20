@@ -33,6 +33,7 @@ public class UserSignupFormDto {
         this.confirmPassword = confirmPassword;
     }
 
+    //실제로 get밖에 사용하지 않음 .-UserResponse
     public String getEmail(){
         return email;
     }

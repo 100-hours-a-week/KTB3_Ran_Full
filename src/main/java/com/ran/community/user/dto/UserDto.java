@@ -1,5 +1,6 @@
 package com.ran.community.user.dto;
 
+//Entity라고 생각
 public class UserDto {
     private long userId;
     private String email;

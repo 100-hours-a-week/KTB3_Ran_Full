@@ -3,6 +3,7 @@ package com.ran.community.user.controller;
 import com.ran.community.user.dto.UserDto;
 import com.ran.community.user.dto.UserLoginDto;
 import com.ran.community.user.dto.UserSignupFormDto;
+import com.ran.community.user.dto.response.UserSignupFormResponseDTO;
 import com.ran.community.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -10,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,18 +32,17 @@ public class UserController {
     //회원 가입
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody UserSignupFormDto userSignupFormDto) {
-        UserDto userDto = userService.registerUser(userSignupFormDto);
-        logger.info(userDto.toString());
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message","register_success","data",Map.of("userId",userDto.getUserId(),"username",userDto.getUsername(),"email",userDto.getEmail())));
+        UserSignupFormResponseDTO userSignupFormResponseDTO = userService.registerUser(userSignupFormDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message","signup_success","userResponse", userSignupFormResponseDTO));
     }
 
     //로그인
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody UserLoginDto userLoginDto, HttpSession httpSession){
-        UserDto userDto = userService.login(userLoginDto);
+        UserSignupFormResponseDTO userSignupFormResponseDTO = userService.login(userLoginDto);
         //로그인 성공 시 세션에 유저 정보 저장해야됨!!
-        httpSession.setAttribute("userId",userDto.getUserId());
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","login_success","data",Map.of("userId",userDto.getUserId())));
+        httpSession.setAttribute("userId", userSignupFormResponseDTO.getUserId());
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","login_success","userResponse", userSignupFormResponseDTO));
     }
 
     //회원 정보 조회
