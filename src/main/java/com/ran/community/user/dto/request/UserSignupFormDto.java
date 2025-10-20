@@ -1,8 +1,6 @@
-package com.ran.community.user.dto;
-import jakarta.validation.constraints.Email;
+package com.ran.community.user.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 
 public class UserSignupFormDto {
     @NotBlank(message = "이메일을 입력해주세요.")
@@ -33,6 +31,7 @@ public class UserSignupFormDto {
         this.confirmPassword = confirmPassword;
     }
 
+    //실제로 get밖에 사용하지 않음 .-UserResponse
     public String getEmail(){
         return email;
     }

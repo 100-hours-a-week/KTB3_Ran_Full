@@ -1,4 +1,4 @@
-package com.ran.community.user.dto;
+package com.ran.community.user.dto.request;
 
 
 import jakarta.validation.constraints.Pattern;

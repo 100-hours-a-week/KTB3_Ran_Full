@@ -1,16 +1,18 @@
-package com.ran.community.post.dto;
+package com.ran.community.post.dto.response;
+
+import com.ran.community.post.entity.Post;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PageDto {
     private PageMeta pageMeta;
-    private List<PostDto> offsetPosts;
+    private List<Post> offsetPosts;
 
     public PageDto() {}
-    public PageDto(int numOfContents, int limit, int numOfPages, int page, List<PostDto> offsetPosts) {
+    public PageDto(int numOfContents, int limit, int numOfPages, int page, List<Post> offsetPosts) {
         this.pageMeta = new PageMeta(numOfContents, limit, numOfPages, page);
-        this.offsetPosts = new ArrayList<PostDto>();
+        this.offsetPosts = new ArrayList<Post>();
     }
     public PageMeta getPageMeta() {
         return pageMeta;
@@ -19,10 +21,10 @@ public class PageDto {
         this.pageMeta = pageMeta;
     }
 
-    public List<PostDto> getOffsetPosts() {
+    public List<Post> getOffsetPosts() {
         return offsetPosts;
     }
-    public void setOffsetPosts(List<PostDto> offsetPosts) {
+    public void setOffsetPosts(List<Post> offsetPosts) {
         this.offsetPosts = offsetPosts;
     }
 }

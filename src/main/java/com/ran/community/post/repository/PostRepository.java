@@ -1,40 +1,37 @@
 package com.ran.community.post.repository;
 
-import com.ran.community.post.dto.PageDto;
-import com.ran.community.post.dto.PageMeta;
-import com.ran.community.post.dto.PostCreateFormDto;
-import com.ran.community.post.dto.PostDto;
-import com.ran.community.user.dto.UserDto;
+import com.ran.community.post.dto.response.PageDto;
+import com.ran.community.post.dto.response.PageMeta;
+import com.ran.community.post.dto.request.PostCreateFormDto;
+import com.ran.community.post.entity.Post;
+import com.ran.community.user.entity.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class PostRepository {
-    private long index;
-    private Map<Long, PostDto> Posts = new LinkedHashMap<>();
+    private AtomicLong index;
+    private Map<Long, Post> Posts = new ConcurrentHashMap<>();
 
-    public PostRepository() {
-        this.index = 0;
-        this.Posts.put(index, new PostDto());
-    }
 
     //게시글 생성
-    public PostDto postCreate(UserDto userDto,PostCreateFormDto postCreateFormDto){
-        PostDto postDto = new PostDto();
+    public Post postCreate(User user, PostCreateFormDto postCreateFormDto){
+        Post post = new Post();
 
-        postDto.setPostId(index);
-        postDto.setPostTitle(postCreateFormDto.getTitle());
-        postDto.setPostContent(postCreateFormDto.getContent());
-        postDto.setPostAuthor(userDto.getUserId());//userid 가져와야됨.
-        postDto.setPostDate();
-        Posts.put(postDto.getPostId(),postDto);
-        index++;//행 갱신
-        return postDto;
+        post.setPostId(index.getAndIncrement());
+        post.setPostTitle(postCreateFormDto.getTitle());
+        post.setPostContent(postCreateFormDto.getContent());
+        post.setPostAuthor(user.getUserId());//userid 가져와야됨.
+        post.setPostDate();
+        Posts.put(post.getPostId(), post);
+        return post;
     }
 
     //특정 게시글 가져오기
-    public Optional<PostDto> getPost(long postId){
+    public Optional<Post> getPost(long postId){
         return Optional.ofNullable(Posts.get(postId));
     }
 //
@@ -45,12 +42,12 @@ public class PostRepository {
 //    }
 
     //전체 리스트 생성
-    public Optional<List<PostDto>> totalPostList(){
+    public Optional<List<Post>> totalPostList(){
         return Optional.of(new ArrayList<>(Posts.values()));
     }
 
     //페이지 offset 데이터
-    public Optional<PageDto> pageOffset(int page, int limit,int numOfContents,int numOfPages,List<PostDto> offsetNextList){
+    public Optional<PageDto> pageOffset(int page, int limit,int numOfContents,int numOfPages,List<Post> offsetNextList){
         PageDto pageData = new PageDto();
         PageMeta pageMeta = new PageMeta();
 
@@ -66,15 +63,15 @@ public class PostRepository {
 
 
     //게시물 수정
-    public Optional<PostDto> updatePost(PostDto postDto,PostCreateFormDto postCreateFormDto){
-        postDto.setPostTitle(postCreateFormDto.getTitle());
-        postDto.setPostContent(postCreateFormDto.getContent());
-        postDto.setPostImageUrl(postCreateFormDto.getImageUrl());
-        return Optional.of(postDto);
+    public Optional<Post> updatePost(Post post, PostCreateFormDto postCreateFormDto){
+        post.setPostTitle(postCreateFormDto.getTitle());
+        post.setPostContent(postCreateFormDto.getContent());
+        post.setPostImageUrl(postCreateFormDto.getImageUrl());
+        return Optional.of(post);
     }
 
     //게시물 삭제
-    public Optional<PostDto> deletePost(long postId){
+    public Optional<Post> deletePost(long postId){
         return Optional.ofNullable(Posts.remove(postId));
     }
 

@@ -1,19 +1,23 @@
 package com.ran.community.user.service;
 
-import com.ran.community.user.dto.UserDto;
-import com.ran.community.user.dto.UserLoginDto;
-import com.ran.community.user.dto.UserSignupFormDto;
+import com.ran.community.user.controller.UserController;
+import com.ran.community.user.entity.User;
+import com.ran.community.user.dto.request.UserLoginDto;
+import com.ran.community.user.dto.request.UserSignupFormDto;
+import com.ran.community.user.dto.response.UserDataResponseDTO;
 import com.ran.community.user.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class UserService {
 
     //DI
     private UserRepository userRepository;
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
 
     @Autowired
     public UserService(UserRepository userRepository) {
@@ -21,13 +25,12 @@ public class UserService {
     }
 
     //식별자로 유저 찾기
-    public UserDto getUser(long userId){
-        //빈값이면 Exception
+    public User getUser(long userId){
         return userRepository.getUser(userId).orElseThrow(()-> new IllegalArgumentException("유저를 찾을 수 없습니다."));
     }
 
     //유저 생성
-    public UserDto createUser(UserSignupFormDto userSignupFormDto){
+    public User createUser(UserSignupFormDto userSignupFormDto){
         return userRepository.addUser(userSignupFormDto);
     }
 
@@ -45,13 +48,17 @@ public class UserService {
         });
     }
 
-    //유저 등록
-    public UserDto registerUser(UserSignupFormDto userSignupFormDto){
+    //유저 등록 //DTO -> Entity로 변환
+    public UserDataResponseDTO registerUser(UserSignupFormDto userSignupFormDto){
         duplicateUsername(userSignupFormDto);//중복 닉네임
         duplicateEmail(userSignupFormDto);//중복 이메일
         passwordConfirm(userSignupFormDto);//비밀번호 재 확인
-        UserDto userDto = createUser(userSignupFormDto);//유저 저장
-        return userDto;//어떤 유저를 등록했는지
+
+        User user = createUser(userSignupFormDto);//유저 저장
+        logger.info(user.toString());
+
+        //위에서 저장한 후 응답 DTO를 만들기 위해 userResponse 양식에 맞게 아래에 생성
+        return new UserDataResponseDTO(user.getUserId(), user.getUsername(), user.getEmail());//어떤 유저를 등록했는지
     }
 
     //비밀번호 재 확인
@@ -63,8 +70,8 @@ public class UserService {
 
     //유저가 존재하는지 확인
     //로그인
-    public UserDto userExists(UserLoginDto userLoginDto) {
-        UserDto user = userRepository.findByEmail(userLoginDto.getEmail())
+    public User userExists(UserLoginDto userLoginDto) {
+        User user = userRepository.findByEmail(userLoginDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("아이디 또는 비밀번호를 확인해주세요."));
 
         if (!userRepository.equalUserInfo(user, userLoginDto)) {
@@ -76,19 +83,27 @@ public class UserService {
 
     //로그인
     //userId 반환
-    public UserDto login(UserLoginDto userLoginDto) {
+    public UserDataResponseDTO login(UserLoginDto userLoginDto) {
+        User user = userExists(userLoginDto);
         //로그인 성공 시 유저 정보 반환
-        return userExists(userLoginDto);
+
+        return new UserDataResponseDTO(user.getUserId(), user.getUsername(), user.getEmail());
+    }
+
+    //유저 정보 조회
+    public UserDataResponseDTO getUserData(long userId){
+        User user = getUser(userId);
+        return new UserDataResponseDTO(user.getUserId(), user.getUsername(), user.getPassword());
     }
 
     //유저 정보 수정
-    public UserDto updateUser(Long userId,UserSignupFormDto userSignupFormDto) {
+    public User updateUser(Long userId, UserSignupFormDto userSignupFormDto) {
         //유저 찾기
         return userRepository.updateUser(getUser(userId),userSignupFormDto);
     }
 
     //유저 정보 삭제
-    public UserDto deletedUser(Long userId) {
+    public User deletedUser(Long userId) {
         return userRepository.deleteUser(userId).orElseThrow(()-> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
     }
 

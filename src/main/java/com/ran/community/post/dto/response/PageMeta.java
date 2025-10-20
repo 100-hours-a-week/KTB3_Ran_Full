@@ -1,4 +1,4 @@
-package com.ran.community.post.dto;
+package com.ran.community.post.dto.response;
 
 public class PageMeta {
     private int numOfContents;

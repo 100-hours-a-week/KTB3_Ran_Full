@@ -1,13 +1,14 @@
-package com.ran.community.user.dto;
+package com.ran.community.user.entity;
 
-public class UserDto {
+//Entity라고 생각
+public class User {
     private long userId;
     private String email;
     private String username;
     private String password;
 
-    public UserDto() {}
-    public UserDto(long userId, String email, String username, String password) {
+    public User() {}
+    public User(long userId, String email, String username, String password) {
         this.userId = userId;
         this.email = email;
         this.username = username;

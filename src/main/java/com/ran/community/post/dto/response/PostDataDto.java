@@ -1,23 +1,24 @@
-package com.ran.community.post.dto;
+package com.ran.community.post.dto.response;
 
-import com.ran.community.user.dto.UserDto;
+
+import com.ran.community.user.entity.User;
 
 import java.time.LocalDateTime;
 
-public class PostDto {
+public class PostDataDto {
     private long postId;
     private String postTitle;
     private String postContent;
-    private long postAuthor;//User에게서 가져오기 FK
+    private long postAuthor;//User에게서 가져오기 FK //게시물 만든이
     private String postImageUrl;
     private LocalDateTime postDate;
 
-    public PostDto() {}
-    public PostDto(long postId, String postTitle, String postContent, UserDto user, LocalDateTime postDate, String postImageUrl) {
+    public PostDataDto() {}
+    public PostDataDto(long postId, String postTitle, String postContent, long postAuthor, LocalDateTime postDate, String postImageUrl) {
         this.postId = postId;
         this.postTitle = postTitle;
         this.postContent = postContent;
-        this.postAuthor = user.getUserId(); //이게 맞나?
+        this.postAuthor = postAuthor;
         this.postDate = postDate;
         this.postImageUrl = postImageUrl;
     }
