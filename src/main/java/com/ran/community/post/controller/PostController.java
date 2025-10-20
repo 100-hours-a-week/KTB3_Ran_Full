@@ -49,7 +49,7 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","posting_read_success","data", post));
     }
 
-    //전체 게시물 조회
+    //전체 게시물 조회 //✅
     @GetMapping()
     public ResponseEntity<?> postsRead(HttpSession httpSession,@RequestParam int page, @RequestParam int limit){
         //userId가 있을 경우에만 확인
@@ -59,11 +59,11 @@ public class PostController {
 
     }
 
-    //게시물 수정
+    //게시물 수정 //✅
     @PatchMapping("/{postId}")
     public ResponseEntity<?> updatePost(@Valid @RequestBody PostCreateFormDto postCreateFormDto, @PathVariable Long postId){
-        Post post = postService.updatePost(postId,postCreateFormDto);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","posts_patch_success","data", post));
+        postService.updatePost(postId,postCreateFormDto);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","posts_patch_success"));
     }
 
     //게시물 삭제

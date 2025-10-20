@@ -6,6 +6,9 @@ import com.ran.community.post.dto.response.PostDataDto;
 import com.ran.community.post.entity.Post;
 import com.ran.community.post.repository.PostRepository;
 import com.ran.community.user.entity.User;
+import com.ran.community.user.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +18,7 @@ import java.util.List;
 @Service
 public class PostService {
     private PostRepository postRepository;
+    private static final Logger logger = LoggerFactory.getLogger(PostService.class);
 
     @Autowired
     public PostService(PostRepository postRepository) {
@@ -70,8 +74,9 @@ public class PostService {
 
     //게시물 수정
     public Post updatePost(Long postId, PostCreateFormDto postCreateFormDto) {
-        return postRepository.updatePost(getPost(postId),postCreateFormDto).orElseThrow(()->new IllegalArgumentException("게시물을 찾을 수 없습니다."));
-
+        Post post = postRepository.updatePost(getPost(postId),postCreateFormDto).orElseThrow(()->new IllegalArgumentException("게시물을 찾을 수 없습니다."));
+        logger.info(post.toString());
+        return post;
     }
 
     //게시물 삭제
