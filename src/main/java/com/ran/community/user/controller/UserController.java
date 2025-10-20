@@ -32,8 +32,8 @@ public class UserController {
     //회원 가입
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody UserSignupFormDto userSignupFormDto) {
-        UserDataResponseDTO userDataResponseDTO = userService.registerUser(userSignupFormDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message","signup_success","userResponse", userDataResponseDTO));
+        userService.registerUser(userSignupFormDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message","signup_success"));
     }
 
     //로그인

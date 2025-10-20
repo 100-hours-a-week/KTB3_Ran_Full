@@ -1,10 +1,13 @@
 package com.ran.community.user.service;
 
+import com.ran.community.user.controller.UserController;
 import com.ran.community.user.entity.User;
 import com.ran.community.user.dto.request.UserLoginDto;
 import com.ran.community.user.dto.request.UserSignupFormDto;
 import com.ran.community.user.dto.response.UserDataResponseDTO;
 import com.ran.community.user.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +16,8 @@ public class UserService {
 
     //DI
     private UserRepository userRepository;
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
 
     @Autowired
     public UserService(UserRepository userRepository) {
@@ -51,6 +56,7 @@ public class UserService {
         passwordConfirm(userSignupFormDto);//비밀번호 재 확인
 
         User user = createUser(userSignupFormDto);//유저 저장
+        logger.info(user.toString());
 
         //위에서 저장한 후 응답 DTO를 만들기 위해 userResponse 양식에 맞게 아래에 생성
         return new UserDataResponseDTO(user.getUserId(), user.getUsername(), user.getEmail());//어떤 유저를 등록했는지
