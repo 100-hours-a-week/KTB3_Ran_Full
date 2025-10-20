@@ -1,13 +1,11 @@
 package com.ran.community.user.dto.response;
 
-import com.ran.community.user.dto.UserLoginDto;
-
-public class UserResponse {
+public class UserResponseDTO {
     private long userId;
     private String username;
     private String email;
 
-    public UserResponse(long userId, String username, String email) {
+    public UserResponseDTO(long userId, String username, String email) {
         this.userId = userId;
         this.username = username;
         this.email = email;
