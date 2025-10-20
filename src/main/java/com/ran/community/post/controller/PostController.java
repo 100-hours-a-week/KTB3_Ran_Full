@@ -66,11 +66,11 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","posts_patch_success"));
     }
 
-    //게시물 삭제
+    //게시물 삭제 //✅
     @DeleteMapping("/{postId}")
     public ResponseEntity<?> deletePost(@PathVariable Long postId){
-        Post post = postService.deletePost(postId);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","posts_delete_success","data", post));
+        postService.deletePost(postId);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","posts_delete_success"));
     }
 
     //특정 게시물의 좋아요 생성 및 삭제

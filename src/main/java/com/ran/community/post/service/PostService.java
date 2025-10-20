@@ -81,6 +81,8 @@ public class PostService {
 
     //게시물 삭제
     public Post deletePost(Long postId) {
-        return postRepository.deletePost(postId).orElseThrow(()->new IllegalArgumentException("게시물을 찾을 수 없습니다."));
+        Post post = postRepository.deletePost(postId).orElseThrow(()->new IllegalArgumentException("게시물을 찾을 수 없습니다."));
+        logger.info(post.toString());
+        return post;
     }
 }
