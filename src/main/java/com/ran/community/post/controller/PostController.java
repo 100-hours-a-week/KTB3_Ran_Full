@@ -3,7 +3,8 @@ package com.ran.community.post.controller;
 import com.ran.community.like.dto.LikeDto;
 import com.ran.community.like.service.LikeService;
 import com.ran.community.post.dto.response.PageDto;
-import com.ran.community.post.dto.PostCreateFormDto;
+import com.ran.community.post.dto.request.PostCreateFormDto;
+import com.ran.community.post.dto.response.PostDataDto;
 import com.ran.community.post.entity.Post;
 import com.ran.community.post.service.PostService;
 import com.ran.community.user.entity.User;
@@ -31,7 +32,7 @@ public class PostController {
         this.likeService = likeService;
     }
 
-    //게시물 생성
+    //게시물 생성 //✅
     @PostMapping()
     public ResponseEntity<?> postCreate(@Valid @RequestBody PostCreateFormDto postCreateFormDto, HttpSession httpSession) {
         //userId의 userDto를 가져오기
@@ -41,15 +42,14 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message","posting_success"));
     }
 
-    //특정 게시물 조회
+    //특정 게시물 조회 //✅
     @GetMapping("/{postId}")
     public ResponseEntity<?> postRead(@PathVariable Long postId){
-        Post post = postService.postRead(postId);
+        PostDataDto post = postService.postReadData(postId);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","posting_read_success","data", post));
     }
 
     //전체 게시물 조회
-    //이거 반환값 확인 바람.
     @GetMapping()
     public ResponseEntity<?> postsRead(HttpSession httpSession,@RequestParam int page, @RequestParam int limit){
         //userId가 있을 경우에만 확인

@@ -1,6 +1,5 @@
 package com.ran.community.post.dto.response;
 
-import com.ran.community.post.dto.PageMeta;
 import com.ran.community.post.entity.Post;
 
 import java.util.ArrayList;

@@ -1,7 +1,8 @@
 package com.ran.community.post.service;
 
 import com.ran.community.post.dto.response.PageDto;
-import com.ran.community.post.dto.PostCreateFormDto;
+import com.ran.community.post.dto.request.PostCreateFormDto;
+import com.ran.community.post.dto.response.PostDataDto;
 import com.ran.community.post.entity.Post;
 import com.ran.community.post.repository.PostRepository;
 import com.ran.community.user.entity.User;
@@ -34,6 +35,12 @@ public class PostService {
     //특정 게시물 조회
     public Post postRead(Long postId) {
         return postRepository.getPost(postId).orElseThrow(()->new IllegalArgumentException("게시물을 찾을 수 없습니다."));
+    }
+
+    //특정 게시물을 조회해서 data json으로 변형
+    public PostDataDto postReadData(Long postId) {
+        Post post = postRead(postId);
+        return new PostDataDto(post.getPostId(),post.getPostTitle(),post.getPostContent(),post.getPostAuthor(),post.getPostDate(),post.getPostImageUrl());
     }
 
 

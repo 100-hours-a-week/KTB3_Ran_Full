@@ -1,8 +1,8 @@
 package com.ran.community.post.repository;
 
 import com.ran.community.post.dto.response.PageDto;
-import com.ran.community.post.dto.PageMeta;
-import com.ran.community.post.dto.PostCreateFormDto;
+import com.ran.community.post.dto.response.PageMeta;
+import com.ran.community.post.dto.request.PostCreateFormDto;
 import com.ran.community.post.entity.Post;
 import com.ran.community.user.entity.User;
 import org.springframework.stereotype.Repository;
