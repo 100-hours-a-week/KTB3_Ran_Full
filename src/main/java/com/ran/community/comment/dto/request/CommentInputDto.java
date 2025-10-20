@@ -1,4 +1,4 @@
-package com.ran.community.comment.dto;
+package com.ran.community.comment.dto.request;
 
 public class CommentInputDto {
     private String content;
