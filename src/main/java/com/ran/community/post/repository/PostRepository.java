@@ -1,6 +1,6 @@
 package com.ran.community.post.repository;
 
-import com.ran.community.post.dto.PageDto;
+import com.ran.community.post.dto.response.PageDto;
 import com.ran.community.post.dto.PageMeta;
 import com.ran.community.post.dto.PostCreateFormDto;
 import com.ran.community.post.dto.PostDto;
@@ -8,28 +8,25 @@ import com.ran.community.user.entity.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class PostRepository {
-    private long index;
-    private Map<Long, PostDto> Posts = new LinkedHashMap<>();
+    private AtomicLong index;
+    private Map<Long, PostDto> Posts = new ConcurrentHashMap<>();
 
-    public PostRepository() {
-        this.index = 0;
-        this.Posts.put(index, new PostDto());
-    }
 
     //게시글 생성
     public PostDto postCreate(User user, PostCreateFormDto postCreateFormDto){
         PostDto postDto = new PostDto();
 
-        postDto.setPostId(index);
+        postDto.setPostId(index.getAndIncrement());
         postDto.setPostTitle(postCreateFormDto.getTitle());
         postDto.setPostContent(postCreateFormDto.getContent());
         postDto.setPostAuthor(user.getUserId());//userid 가져와야됨.
         postDto.setPostDate();
         Posts.put(postDto.getPostId(),postDto);
-        index++;//행 갱신
         return postDto;
     }
 
