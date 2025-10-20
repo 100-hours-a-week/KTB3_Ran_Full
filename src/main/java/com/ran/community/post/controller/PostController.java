@@ -35,10 +35,10 @@ public class PostController {
     @PostMapping()
     public ResponseEntity<?> postCreate(@Valid @RequestBody PostCreateFormDto postCreateFormDto, HttpSession httpSession) {
         //userId의 userDto를 가져오기
-        User user = userService.getUser((long) httpSession.getAttribute("userId"));
+        userService.getUser((long) httpSession.getAttribute("userId"));
         //로그인된 user의 객체도 함께 사용
-        PostDto postDto = postService.postCreate(user,postCreateFormDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message","posting_success","data",postDto));
+        postService.postCreate(user,postCreateFormDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message","posting_success"));
     }
 
     //특정 게시물 조회

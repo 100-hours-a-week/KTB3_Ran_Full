@@ -25,9 +25,10 @@ public class UserService {
     }
 
     //식별자로 유저 찾기
-    public User getUser(long userId){
+    public UserDataResponseDTO getUser(long userId){
+        User user = userRepository.getUser(userId).orElseThrow(()-> new IllegalArgumentException("유저를 찾을 수 없습니다."));
         //빈값이면 Exception
-        return userRepository.getUser(userId).orElseThrow(()-> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+        return new UserDataResponseDTO(user.getUserId(),user.getUsername(),user.getEmail());
     }
 
     //유저 생성

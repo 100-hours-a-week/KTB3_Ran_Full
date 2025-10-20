@@ -29,14 +29,14 @@ public class UserController {
         this.userService = userService;
     }
 
-    //회원 가입
+    //회원 가입 //✅
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody UserSignupFormDto userSignupFormDto) {
         userService.registerUser(userSignupFormDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message","signup_success"));
     }
 
-    //로그인
+    //로그인 //✅
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody UserLoginDto userLoginDto, HttpSession httpSession){
         UserDataResponseDTO userDataResponseDTO = userService.login(userLoginDto);
@@ -45,25 +45,25 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","login_success","userResponse", userDataResponseDTO));
     }
 
-    //회원 정보 조회
+    //회원 정보 조회 //✅
     @GetMapping("/{userId}")
     public ResponseEntity<?> userInfo(@PathVariable Long userId){
-        User user = userService.getUser(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","user_confirm","data",Map.of("userId", user.getUserId(),"username", user.getUsername(),"email", user.getEmail(),"password", user.getPassword())));
+        UserDataResponseDTO userDataResponseDTO = userService.getUser(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","user_confirm","data", userDataResponseDTO));
     }
 
-    //회원 정보 수정
+    //회원 정보 수정 //✅
     @PatchMapping("/{userId}")
     public ResponseEntity<?> userPatchInfo(@Valid @PathVariable Long userId,@RequestBody UserSignupFormDto userSignupFormDto){
-        User user = userService.updateUser(userId,userSignupFormDto);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","Patch_user","data",Map.of("userId", user.getUserId(),"username", user.getUsername(),"email", user.getEmail(),"password", user.getPassword())));
+        userService.updateUser(userId,userSignupFormDto);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","Patch_user"));
     }
 
-    //회원 탈퇴
+    //회원 탈퇴 //✅
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> userDelete(@PathVariable Long userId){
-        User user = userService.deletedUser(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","user_delete","data",Map.of("userId", user.getUserId(),"username", user.getUsername(),"email", user.getEmail(),"password", user.getPassword())));
+        userService.deletedUser(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","user_delete"));
     }
 
 }
