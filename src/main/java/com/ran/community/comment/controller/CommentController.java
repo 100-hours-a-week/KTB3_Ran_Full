@@ -1,5 +1,6 @@
 package com.ran.community.comment.controller;
 
+import com.ran.community.comment.dto.response.CommentResponseDTO;
 import com.ran.community.comment.entity.Comment;
 import com.ran.community.comment.dto.request.CommentInputDto;
 import com.ran.community.comment.service.CommentService;
@@ -32,7 +33,7 @@ public class CommentController {
     //특정 게시글에서 댓글 조회
     @GetMapping()
     public ResponseEntity<?> commentList(@PathVariable Long postId) {
-        List<Comment> commentList = commentService.commentListByPostId(postId);
+        List<CommentResponseDTO> commentList = commentService.commentListByPostId(postId);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","comment_list_success","data",commentList));
     }
 

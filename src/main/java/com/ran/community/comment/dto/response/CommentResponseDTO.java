@@ -4,14 +4,14 @@ import com.ran.community.comment.entity.Comment;
 
 import java.time.LocalDateTime;
 
-public class commentResponseDTO {
+public class CommentResponseDTO {
     private long commentId;
     private String content;
     private long authorId;
     private LocalDateTime postTime;
 
-    public commentResponseDTO(Comment comment) {}
-    public commentResponseDTO(long commentId, String content, long authorId, LocalDateTime postTime) {
+    public CommentResponseDTO(Comment comment) {}
+    public CommentResponseDTO(long commentId, String content, long authorId, LocalDateTime postTime) {
         this.commentId = commentId;
         this.content = content;
         this.authorId = authorId;

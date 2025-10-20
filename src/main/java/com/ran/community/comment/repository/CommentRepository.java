@@ -8,15 +8,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class CommentRepository {
-    private long index;
-    private Map<Long, Comment> Comments = new LinkedHashMap<>();
+    private AtomicLong index;
+    private Map<Long, Comment> Comments = new ConcurrentHashMap<>();
 
-    public CommentRepository(){
-        this.index = 0;
-    }
 
     //식별자로 찾기
     public Optional<Comment> getComment(long commentId){
@@ -26,13 +25,11 @@ public class CommentRepository {
     //댓글 생성
     public Comment commentCreate(long userId, long postId, CommentInputDto commentInputDto){
         Comment comment = new Comment();
-
-        comment.setCommentId(index);
+        comment.setCommentId(index.getAndIncrement());
         comment.setAuthorId(userId);
         comment.setPostId(postId);
         comment.setPostTime();
         comment.setContent(commentInputDto.getComment());
-        index++;
         Comments.put(comment.getCommentId(), comment);
         return comment;
     }

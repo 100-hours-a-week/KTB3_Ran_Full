@@ -1,5 +1,6 @@
 package com.ran.community.comment.service;
 
+import com.ran.community.comment.dto.response.CommentResponseDTO;
 import com.ran.community.comment.entity.Comment;
 import com.ran.community.comment.dto.request.CommentInputDto;
 import com.ran.community.comment.repository.CommentRepository;
@@ -27,8 +28,11 @@ public class CommentService {
     }
 
     //특정 게시글(postId)의 댓글 가져오기
-    public List<Comment> commentListByPostId(Long postId) {
-        return commentRepository.commentListByPostId(postId).orElseThrow(()->new IllegalArgumentException("댓글이 없습니다."));
+    public List<CommentResponseDTO> commentListByPostId(Long postId) {
+        List<Comment> comments = commentRepository.commentListByPostId(postId).orElseThrow(()->new IllegalArgumentException("댓글이 없습니다."));
+
+        List<CommentResponseDTO> cmtResponseDTO = comments.stream().map(comment -> new CommentResponseDTO(comment.getCommentId(),comment.getContent(),comment.getAuthorId(),comment.getPostTime()));
+        return cmtResponseDTO;
     }
 
     //댓글 생성
