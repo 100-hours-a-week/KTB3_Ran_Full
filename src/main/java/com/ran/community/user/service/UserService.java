@@ -3,7 +3,7 @@ package com.ran.community.user.service;
 import com.ran.community.user.dto.UserDto;
 import com.ran.community.user.dto.UserLoginDto;
 import com.ran.community.user.dto.UserSignupFormDto;
-import com.ran.community.user.dto.response.UserSignupFormResponseDTO;
+import com.ran.community.user.dto.response.UserDataResponseDTO;
 import com.ran.community.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,7 +45,7 @@ public class UserService {
     }
 
     //유저 등록 //DTO -> Entity로 변환
-    public UserSignupFormResponseDTO registerUser(UserSignupFormDto userSignupFormDto){
+    public UserDataResponseDTO registerUser(UserSignupFormDto userSignupFormDto){
         duplicateUsername(userSignupFormDto);//중복 닉네임
         duplicateEmail(userSignupFormDto);//중복 이메일
         passwordConfirm(userSignupFormDto);//비밀번호 재 확인
@@ -53,7 +53,7 @@ public class UserService {
         UserDto userDto = createUser(userSignupFormDto);//유저 저장
 
         //위에서 저장한 후 응답 DTO를 만들기 위해 userResponse 양식에 맞게 아래에 생성
-        return new UserSignupFormResponseDTO(userDto.getUserId(),userDto.getUsername(),userDto.getEmail());//어떤 유저를 등록했는지
+        return new UserDataResponseDTO(userDto.getUserId(),userDto.getUsername(),userDto.getEmail());//어떤 유저를 등록했는지
     }
 
     //비밀번호 재 확인
@@ -78,11 +78,11 @@ public class UserService {
 
     //로그인
     //userId 반환
-    public UserSignupFormResponseDTO login(UserLoginDto userLoginDto) {
+    public UserDataResponseDTO login(UserLoginDto userLoginDto) {
         UserDto userDto = userExists(userLoginDto);
         //로그인 성공 시 유저 정보 반환
 
-        return new UserSignupFormResponseDTO(userDto.getUserId(),userDto.getUsername(),userDto.getEmail());
+        return new UserDataResponseDTO(userDto.getUserId(),userDto.getUsername(),userDto.getEmail());
     }
 
     //유저 정보 수정

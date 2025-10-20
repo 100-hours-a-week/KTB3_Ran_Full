@@ -1,11 +1,11 @@
 package com.ran.community.user.dto.response;
 
-public class UserSignupFormResponseDTO {
+public class UserDataResponseDTO {
     private long userId;
     private String username;
     private String email;
 
-    public UserSignupFormResponseDTO(long userId, String username, String email) {
+    public UserDataResponseDTO(long userId, String username, String email) {
         this.userId = userId;
         this.username = username;
         this.email = email;

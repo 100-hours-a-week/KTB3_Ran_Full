@@ -3,7 +3,7 @@ package com.ran.community.user.controller;
 import com.ran.community.user.dto.UserDto;
 import com.ran.community.user.dto.UserLoginDto;
 import com.ran.community.user.dto.UserSignupFormDto;
-import com.ran.community.user.dto.response.UserSignupFormResponseDTO;
+import com.ran.community.user.dto.response.UserDataResponseDTO;
 import com.ran.community.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -32,17 +32,17 @@ public class UserController {
     //회원 가입
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody UserSignupFormDto userSignupFormDto) {
-        UserSignupFormResponseDTO userSignupFormResponseDTO = userService.registerUser(userSignupFormDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message","signup_success","userResponse", userSignupFormResponseDTO));
+        UserDataResponseDTO userDataResponseDTO = userService.registerUser(userSignupFormDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message","signup_success","userResponse", userDataResponseDTO));
     }
 
     //로그인
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody UserLoginDto userLoginDto, HttpSession httpSession){
-        UserSignupFormResponseDTO userSignupFormResponseDTO = userService.login(userLoginDto);
+        UserDataResponseDTO userDataResponseDTO = userService.login(userLoginDto);
         //로그인 성공 시 세션에 유저 정보 저장해야됨!!
-        httpSession.setAttribute("userId", userSignupFormResponseDTO.getUserId());
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","login_success","userResponse", userSignupFormResponseDTO));
+        httpSession.setAttribute("userId", userDataResponseDTO.getUserId());
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","login_success","userResponse", userDataResponseDTO));
     }
 
     //회원 정보 조회
