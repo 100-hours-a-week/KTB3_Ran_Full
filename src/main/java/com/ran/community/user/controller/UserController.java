@@ -1,8 +1,8 @@
 package com.ran.community.user.controller;
 
-import com.ran.community.user.dto.UserDto;
-import com.ran.community.user.dto.UserLoginDto;
-import com.ran.community.user.dto.UserSignupFormDto;
+import com.ran.community.user.entity.User;
+import com.ran.community.user.dto.request.UserLoginDto;
+import com.ran.community.user.dto.request.UserSignupFormDto;
 import com.ran.community.user.dto.response.UserDataResponseDTO;
 import com.ran.community.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -48,22 +48,22 @@ public class UserController {
     //회원 정보 조회
     @GetMapping("/{userId}")
     public ResponseEntity<?> userInfo(@PathVariable Long userId){
-        UserDto userDto = userService.getUser(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","user_confirm","data",Map.of("userId",userDto.getUserId(),"username",userDto.getUsername(),"email",userDto.getEmail(),"password",userDto.getPassword())));
+        User user = userService.getUser(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","user_confirm","data",Map.of("userId", user.getUserId(),"username", user.getUsername(),"email", user.getEmail(),"password", user.getPassword())));
     }
 
     //회원 정보 수정
     @PatchMapping("/{userId}")
     public ResponseEntity<?> userPatchInfo(@Valid @PathVariable Long userId,@RequestBody UserSignupFormDto userSignupFormDto){
-        UserDto userDto = userService.updateUser(userId,userSignupFormDto);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","Patch_user","data",Map.of("userId",userDto.getUserId(),"username",userDto.getUsername(),"email",userDto.getEmail(),"password",userDto.getPassword())));
+        User user = userService.updateUser(userId,userSignupFormDto);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","Patch_user","data",Map.of("userId", user.getUserId(),"username", user.getUsername(),"email", user.getEmail(),"password", user.getPassword())));
     }
 
     //회원 탈퇴
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> userDelete(@PathVariable Long userId){
-        UserDto userDto = userService.deletedUser(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","user_delete","data",Map.of("userId",userDto.getUserId(),"username",userDto.getUsername(),"email",userDto.getEmail(),"password",userDto.getPassword())));
+        User user = userService.deletedUser(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","user_delete","data",Map.of("userId", user.getUserId(),"username", user.getUsername(),"email", user.getEmail(),"password", user.getPassword())));
     }
 
 }

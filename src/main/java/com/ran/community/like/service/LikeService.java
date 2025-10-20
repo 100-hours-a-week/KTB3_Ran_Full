@@ -2,8 +2,6 @@ package com.ran.community.like.service;
 
 import com.ran.community.like.dto.LikeDto;
 import com.ran.community.like.repository.LikeRepository;
-import com.ran.community.post.dto.PostDto;
-import com.ran.community.user.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

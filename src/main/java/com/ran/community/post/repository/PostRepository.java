@@ -4,7 +4,7 @@ import com.ran.community.post.dto.PageDto;
 import com.ran.community.post.dto.PageMeta;
 import com.ran.community.post.dto.PostCreateFormDto;
 import com.ran.community.post.dto.PostDto;
-import com.ran.community.user.dto.UserDto;
+import com.ran.community.user.entity.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -20,13 +20,13 @@ public class PostRepository {
     }
 
     //게시글 생성
-    public PostDto postCreate(UserDto userDto,PostCreateFormDto postCreateFormDto){
+    public PostDto postCreate(User user, PostCreateFormDto postCreateFormDto){
         PostDto postDto = new PostDto();
 
         postDto.setPostId(index);
         postDto.setPostTitle(postCreateFormDto.getTitle());
         postDto.setPostContent(postCreateFormDto.getContent());
-        postDto.setPostAuthor(userDto.getUserId());//userid 가져와야됨.
+        postDto.setPostAuthor(user.getUserId());//userid 가져와야됨.
         postDto.setPostDate();
         Posts.put(postDto.getPostId(),postDto);
         index++;//행 갱신

@@ -1,8 +1,6 @@
-package com.ran.community.user.dto;
-import jakarta.validation.constraints.Email;
+package com.ran.community.user.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 
 public class UserSignupFormDto {
     @NotBlank(message = "이메일을 입력해주세요.")

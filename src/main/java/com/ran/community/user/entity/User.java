@@ -1,7 +1,6 @@
 package com.ran.community.user.entity;
 
-
-//User역할을 하는 Entity 객체로 분리
+//Entity라고 생각
 public class User {
     private long userId;
     private String email;

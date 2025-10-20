@@ -4,7 +4,7 @@ import com.ran.community.post.dto.PageDto;
 import com.ran.community.post.dto.PostCreateFormDto;
 import com.ran.community.post.dto.PostDto;
 import com.ran.community.post.repository.PostRepository;
-import com.ran.community.user.dto.UserDto;
+import com.ran.community.user.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +27,8 @@ public class PostService {
 
 
     //생성하기
-    public PostDto postCreate(UserDto userDto,PostCreateFormDto postCreateFormDto) {
-        return postRepository.postCreate(userDto,postCreateFormDto);
+    public PostDto postCreate(User user, PostCreateFormDto postCreateFormDto) {
+        return postRepository.postCreate(user,postCreateFormDto);
     }
 
     //특정 게시물 조회

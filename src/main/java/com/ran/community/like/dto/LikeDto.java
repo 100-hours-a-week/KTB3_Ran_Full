@@ -1,7 +1,7 @@
 package com.ran.community.like.dto;
 
 import com.ran.community.post.dto.PostDto;
-import com.ran.community.user.dto.UserDto;
+import com.ran.community.user.entity.User;
 
 import java.time.LocalDateTime;
 
@@ -12,7 +12,7 @@ public class LikeDto {
     private LocalDateTime likeTime;
 
     public LikeDto() {}
-    public LikeDto(long likeId, UserDto user, PostDto post) {
+    public LikeDto(long likeId, User user, PostDto post) {
         this.likeId = likeId;
         this.userId = user.getUserId();
         this.postId = post.getPostId();

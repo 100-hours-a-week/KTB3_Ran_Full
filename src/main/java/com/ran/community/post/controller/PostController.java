@@ -6,7 +6,7 @@ import com.ran.community.post.dto.PageDto;
 import com.ran.community.post.dto.PostCreateFormDto;
 import com.ran.community.post.dto.PostDto;
 import com.ran.community.post.service.PostService;
-import com.ran.community.user.dto.UserDto;
+import com.ran.community.user.entity.User;
 import com.ran.community.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -35,9 +35,9 @@ public class PostController {
     @PostMapping()
     public ResponseEntity<?> postCreate(@Valid @RequestBody PostCreateFormDto postCreateFormDto, HttpSession httpSession) {
         //userId의 userDto를 가져오기
-        UserDto userDto = userService.getUser((long) httpSession.getAttribute("userId"));
+        User user = userService.getUser((long) httpSession.getAttribute("userId"));
         //로그인된 user의 객체도 함께 사용
-        PostDto postDto = postService.postCreate(userDto,postCreateFormDto);
+        PostDto postDto = postService.postCreate(user,postCreateFormDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message","posting_success","data",postDto));
     }
 

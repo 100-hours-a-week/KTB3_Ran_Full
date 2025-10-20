@@ -1,6 +1,6 @@
 package com.ran.community.post.dto;
 
-import com.ran.community.user.dto.UserDto;
+import com.ran.community.user.entity.User;
 
 import java.time.LocalDateTime;
 
@@ -13,7 +13,7 @@ public class PostDto {
     private LocalDateTime postDate;
 
     public PostDto() {}
-    public PostDto(long postId, String postTitle, String postContent, UserDto user, LocalDateTime postDate, String postImageUrl) {
+    public PostDto(long postId, String postTitle, String postContent, User user, LocalDateTime postDate, String postImageUrl) {
         this.postId = postId;
         this.postTitle = postTitle;
         this.postContent = postContent;
