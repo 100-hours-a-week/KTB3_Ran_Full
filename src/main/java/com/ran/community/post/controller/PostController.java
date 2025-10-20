@@ -1,11 +1,11 @@
 package com.ran.community.post.controller;
 
-import com.ran.community.like.dto.LikeDto;
+import com.ran.community.like.dto.response.LikeCountDto;
+import com.ran.community.like.entity.Like;
 import com.ran.community.like.service.LikeService;
 import com.ran.community.post.dto.response.PageDto;
 import com.ran.community.post.dto.request.PostCreateFormDto;
 import com.ran.community.post.dto.response.PostDataDto;
-import com.ran.community.post.entity.Post;
 import com.ran.community.post.service.PostService;
 import com.ran.community.user.entity.User;
 import com.ran.community.user.service.UserService;
@@ -77,23 +77,23 @@ public class PostController {
     @PostMapping("/{postId}/likes")
     public ResponseEntity<?> like(@PathVariable Long postId, HttpSession session) {
         long userId = (long) session.getAttribute("userId");
-        LikeDto like = likeService.addLike(userId,postId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message","like_create_success","data",like));
+        likeService.addLike(userId,postId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message","like_create_success"));
     }
 
     //특정 게시물의 좋아요 삭제
     @DeleteMapping("/{postId}/likes")
     public ResponseEntity<?> unlike(@PathVariable Long postId, HttpSession session) {
         long userId = (long) session.getAttribute("userId");
-        LikeDto like = likeService.removeLike(userId,postId);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","unlike_success","data",like));
+        likeService.removeLike(userId,postId);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","unlike_success"));
 
     }
 
     //특정 게시물의 좋아요 조회
     @GetMapping("/{postId}/likes")
     public ResponseEntity<?> getLikes(@PathVariable Long postId) {
-        int likeCount = likeService.getCountLike(postId);
+        LikeCountDto likeCount = likeService.getLikeCountDto(postId);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","like_read_success","data",likeCount));
     }
 

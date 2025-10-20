@@ -1,18 +1,18 @@
-package com.ran.community.like.dto;
+package com.ran.community.like.entity;
 
 import com.ran.community.post.entity.Post;
 import com.ran.community.user.entity.User;
 
 import java.time.LocalDateTime;
 
-public class LikeDto {
+public class Like {
     private long likeId;
     private long userId;
     private long postId;
     private LocalDateTime likeTime;
 
-    public LikeDto() {}
-    public LikeDto(long likeId, User user, Post post) {
+    public Like() {}
+    public Like(long likeId, User user, Post post) {
         this.likeId = likeId;
         this.userId = user.getUserId();
         this.postId = post.getPostId();
