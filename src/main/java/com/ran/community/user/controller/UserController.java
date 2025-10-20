@@ -48,7 +48,7 @@ public class UserController {
     //회원 정보 조회 //✅
     @GetMapping("/{userId}")
     public ResponseEntity<?> userInfo(@PathVariable Long userId){
-        UserDataResponseDTO userDataResponseDTO = userService.getUser(userId);
+        UserDataResponseDTO userDataResponseDTO = userService.getUserData(userId);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","user_confirm","data", userDataResponseDTO));
     }
 

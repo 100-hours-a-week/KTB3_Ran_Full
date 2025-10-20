@@ -25,10 +25,8 @@ public class UserService {
     }
 
     //식별자로 유저 찾기
-    public UserDataResponseDTO getUser(long userId){
-        User user = userRepository.getUser(userId).orElseThrow(()-> new IllegalArgumentException("유저를 찾을 수 없습니다."));
-        //빈값이면 Exception
-        return new UserDataResponseDTO(user.getUserId(),user.getUsername(),user.getEmail());
+    public User getUser(long userId){
+        return userRepository.getUser(userId).orElseThrow(()-> new IllegalArgumentException("유저를 찾을 수 없습니다."));
     }
 
     //유저 생성
@@ -90,6 +88,12 @@ public class UserService {
         //로그인 성공 시 유저 정보 반환
 
         return new UserDataResponseDTO(user.getUserId(), user.getUsername(), user.getEmail());
+    }
+
+    //유저 정보 조회
+    public UserDataResponseDTO getUserData(long userId){
+        User user = getUser(userId);
+        return new UserDataResponseDTO(user.getUserId(), user.getUsername(), user.getPassword());
     }
 
     //유저 정보 수정
