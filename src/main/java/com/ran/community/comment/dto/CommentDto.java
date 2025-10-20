@@ -1,6 +1,6 @@
 package com.ran.community.comment.dto;
 
-import com.ran.community.post.dto.PostDto;
+import com.ran.community.post.entity.Post;
 import com.ran.community.user.entity.User;
 
 import java.time.LocalDateTime;
@@ -13,7 +13,7 @@ public class CommentDto {
     private LocalDateTime postTime;
 
     public CommentDto() {}
-    public CommentDto(long commentId, String content, User user, PostDto post, LocalDateTime postTime) {
+    public CommentDto(long commentId, String content, User user, Post post, LocalDateTime postTime) {
         this.commentId = commentId;
         this.content = content;
         this.authorId = user.getUserId();

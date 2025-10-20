@@ -1,10 +1,10 @@
-package com.ran.community.post.dto;
+package com.ran.community.post.entity;
 
 import com.ran.community.user.entity.User;
 
 import java.time.LocalDateTime;
 
-public class PostDto {
+public class Post {
     private long postId;
     private String postTitle;
     private String postContent;
@@ -12,8 +12,8 @@ public class PostDto {
     private String postImageUrl;
     private LocalDateTime postDate;
 
-    public PostDto() {}
-    public PostDto(long postId, String postTitle, String postContent, User user, LocalDateTime postDate, String postImageUrl) {
+    public Post() {}
+    public Post(long postId, String postTitle, String postContent, User user, LocalDateTime postDate, String postImageUrl) {
         this.postId = postId;
         this.postTitle = postTitle;
         this.postContent = postContent;
