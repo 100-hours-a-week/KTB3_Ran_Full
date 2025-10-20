@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
@@ -31,7 +32,7 @@ public class CommentService {
     public List<CommentResponseDTO> commentListByPostId(Long postId) {
         List<Comment> comments = commentRepository.commentListByPostId(postId).orElseThrow(()->new IllegalArgumentException("댓글이 없습니다."));
 
-        List<CommentResponseDTO> cmtResponseDTO = comments.stream().map(comment -> new CommentResponseDTO(comment.getCommentId(),comment.getContent(),comment.getAuthorId(),comment.getPostTime()));
+        List<CommentResponseDTO> cmtResponseDTO = comments.stream().map(comment -> new CommentResponseDTO(comment.getCommentId(),comment.getContent(),comment.getAuthorId(),comment.getPostTime())).collect(Collectors.toList());
         return cmtResponseDTO;
     }
 
