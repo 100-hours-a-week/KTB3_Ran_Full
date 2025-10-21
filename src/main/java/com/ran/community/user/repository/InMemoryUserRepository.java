@@ -45,12 +45,15 @@ public class InMemoryUserRepository implements UserRepository {
 
     }
 
-    //유저 정보 넣기
+    //유저 정보 수정하기 업데이트는 set을 써야하지않아?
     @Override
     public User updateUser(User user, UserSignupFormDto userSignupFormDto) {
-        return new User(user.getUserId(),userSignupFormDto.getEmail(),userSignupFormDto.getUsername(),userSignupFormDto.getPassword()
-        );
+        user.setEmail(userSignupFormDto.getEmail());
+        user.setUsername(userSignupFormDto.getUsername());
+        user.setPassword(userSignupFormDto.getPassword());
+        return user;
     }
+
 
     @Override
     public Optional<User> deleteUser(long userId) {
