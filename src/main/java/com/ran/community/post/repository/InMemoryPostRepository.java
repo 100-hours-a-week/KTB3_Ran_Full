@@ -1,5 +1,6 @@
 package com.ran.community.post.repository;
 
+import com.ran.community.global.PostIdGenerator;
 import com.ran.community.post.dto.response.PageDto;
 import com.ran.community.post.dto.response.PageMeta;
 import com.ran.community.post.dto.request.PostCreateFormDto;
@@ -13,7 +14,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class InMemoryPostRepository implements PostRepository {
-    private AtomicLong index;
     private Map<Long, Post> Posts = new ConcurrentHashMap<>();
 
 
@@ -22,7 +22,7 @@ public class InMemoryPostRepository implements PostRepository {
     public Post postCreate(User user, PostCreateFormDto postCreateFormDto){
         Post post = new Post();
 
-        post.setPostId(index.getAndIncrement());
+        post.setPostId(PostIdGenerator.getInstance().nextId());
         post.setPostTitle(postCreateFormDto.getTitle());
         post.setPostContent(postCreateFormDto.getContent());
         post.setPostAuthor(user.getUserId());//userid 가져와야됨.
