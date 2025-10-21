@@ -24,8 +24,6 @@ public class InMemoryUserRepository implements UserRepository {
     @Override
     public User addUser(UserSignupFormDto userSignupFormDto) {
         User user = new User();
-        //DI에 해치지 않을까?
-        // -> 용도는 폼에서 생성된 객체와 분리되기 때문에, 실제 user entity는 만들어지지 않음
 
         user.setUserId(index.getAndIncrement());//값 반환 후 index 증가;
         user.setPassword(userSignupFormDto.getPassword());
@@ -50,10 +48,8 @@ public class InMemoryUserRepository implements UserRepository {
     //유저 정보 넣기
     @Override
     public User updateUser(User user, UserSignupFormDto userSignupFormDto) {
-        user.setPassword(userSignupFormDto.getPassword());
-        user.setUsername(userSignupFormDto.getUsername());
-        user.setEmail(userSignupFormDto.getEmail());
-        return new User();
+        return new User(user.getUserId(),userSignupFormDto.getEmail(),userSignupFormDto.getUsername(),userSignupFormDto.getPassword()
+        );
     }
 
     @Override
