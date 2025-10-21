@@ -1,6 +1,5 @@
 package com.ran.community.user.service;
 
-import com.ran.community.user.controller.UserController;
 import com.ran.community.user.entity.User;
 import com.ran.community.user.dto.request.UserLoginDto;
 import com.ran.community.user.dto.request.UserSignupFormDto;
@@ -21,7 +20,15 @@ public class UserService {
 
     @Autowired
     public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+        this.userRepository = userRepository;//UserRepository를 인터페이스로 상속받고 있는 구현체들 중 필요한 클래스를 자동으로 생성자에 주입
+        //때문에, 인터페이스로 분리해야만 spring의 DI를 활용할수있는 것.
+        //기존 코드에서는 인터페이스가 아닌 구현체로 받고 있었기 때문에 autowired가 있으나 마나였던 것임.
+        //wow
+    }
+
+    //이메일과 닉네임을 비교
+    public boolean equalUserInfo(User user, UserLoginDto userLoginDto) {
+        return user.getPassword().equals(userLoginDto.getPassword());
     }
 
     //식별자로 유저 찾기
@@ -74,7 +81,7 @@ public class UserService {
         User user = userRepository.findByEmail(userLoginDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("아이디 또는 비밀번호를 확인해주세요."));
 
-        if (!userRepository.equalUserInfo(user, userLoginDto)) {
+        if (!equalUserInfo(user, userLoginDto)) {
             throw new IllegalArgumentException("아이디 또는 비밀번호를 확인해주세요.");
         }
 
