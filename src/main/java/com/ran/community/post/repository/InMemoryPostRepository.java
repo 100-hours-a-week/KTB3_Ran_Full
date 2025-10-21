@@ -20,13 +20,7 @@ public class InMemoryPostRepository implements PostRepository {
     //게시글 생성
     @Override
     public Post postCreate(User user, PostCreateFormDto postCreateFormDto){
-        Post post = new Post();
-
-        post.setPostId(PostIdGenerator.getInstance().nextId());
-        post.setPostTitle(postCreateFormDto.getTitle());
-        post.setPostContent(postCreateFormDto.getContent());
-        post.setPostAuthor(user.getUserId());//userid 가져와야됨.
-        post.setPostDate();
+        Post post = new Post(PostIdGenerator.getInstance().nextId(),postCreateFormDto.getTitle(),postCreateFormDto.getContent(),user.getUserId(),null);
         Posts.put(post.getPostId(), post);
         return post;
     }
@@ -53,10 +47,8 @@ public class InMemoryPostRepository implements PostRepository {
     //게시물 수정
     @Override
     public Optional<Post> updatePost(Post post, PostCreateFormDto postCreateFormDto){
-        post.setPostTitle(postCreateFormDto.getTitle());
-        post.setPostContent(postCreateFormDto.getContent());
-        post.setPostImageUrl(postCreateFormDto.getImageUrl());
-        return Optional.of(post);
+        Post updatePost = new Post(post.getPostId(), postCreateFormDto.getTitle(), postCreateFormDto.getContent(),post.getPostAuthor(),postCreateFormDto.getImageUrl());
+        return Optional.of(updatePost);
     }
 
     //게시물 삭제
