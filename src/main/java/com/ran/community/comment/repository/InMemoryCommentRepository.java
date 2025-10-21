@@ -2,6 +2,7 @@ package com.ran.community.comment.repository;
 
 import com.ran.community.comment.entity.Comment;
 import com.ran.community.comment.dto.request.CommentInputDto;
+import com.ran.community.global.CommentIdGenerator;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,7 +13,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class InMemoryCommentRepository  implements CommentRepository {
-    private AtomicLong index;
     private final Map<Long, Comment> Comments = new ConcurrentHashMap<>();
 
     @Override
@@ -23,7 +23,7 @@ public class InMemoryCommentRepository  implements CommentRepository {
     @Override
     public Comment commentCreate(long userId, long postId, CommentInputDto commentInputDto){
         Comment comment = new Comment();
-        comment.setCommentId(index.getAndIncrement());
+        comment.setCommentId(CommentIdGenerator.getInstance().nextId());
         comment.setAuthorId(userId);
         comment.setPostId(postId);
         comment.setPostTime();
