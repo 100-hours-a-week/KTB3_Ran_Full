@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
-    private CommentRepository commentRepository;
+    private final CommentRepository commentRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(CommentService.class);
 
@@ -33,6 +33,7 @@ public class CommentService {
         List<Comment> comments = commentRepository.commentListByPostId(postId).orElseThrow(()->new IllegalArgumentException("댓글이 없습니다."));
 
         List<CommentResponseDTO> cmtResponseDTO = comments.stream().map(comment -> new CommentResponseDTO(comment.getCommentId(),comment.getContent(),comment.getAuthorId(),comment.getPostTime())).collect(Collectors.toList());
+        logger.info(cmtResponseDTO.toString());
         return cmtResponseDTO;
     }
 
