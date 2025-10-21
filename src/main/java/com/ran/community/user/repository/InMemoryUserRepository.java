@@ -1,5 +1,6 @@
 package com.ran.community.user.repository;
 
+import com.ran.community.global.UserIdGenerator;
 import com.ran.community.user.entity.User;
 import com.ran.community.user.dto.request.UserSignupFormDto;
 import org.springframework.stereotype.Repository;
@@ -7,13 +8,12 @@ import org.springframework.stereotype.Repository;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
+
 
 @Repository
 public class InMemoryUserRepository implements UserRepository {
-    //db를 대신하여 dto를 repository로 map으로 users db를 만드는 거구나.
-    private AtomicLong index = new AtomicLong(0); //인덱스를 담당
-    private Map<Long, User> Users = new ConcurrentHashMap<>(); //유저 객체를 담는 DB
+    //DB를 대신하는 Users Map도 Index를 보장 받아야되기 때문에 싱글톤으로 구현
+    private final Map<Long, User> Users = new ConcurrentHashMap<>(); //유저 객체를 담는 DB
 
 
     @Override
@@ -25,7 +25,7 @@ public class InMemoryUserRepository implements UserRepository {
     public User addUser(UserSignupFormDto userSignupFormDto) {
         User user = new User();
 
-        user.setUserId(index.getAndIncrement());//값 반환 후 index 증가;
+        user.setUserId(UserIdGenerator.getInstance().nextId());//값 반환 후 index 증가;
         user.setPassword(userSignupFormDto.getPassword());
         user.setUsername(userSignupFormDto.getUsername());
         user.setEmail(userSignupFormDto.getEmail());
