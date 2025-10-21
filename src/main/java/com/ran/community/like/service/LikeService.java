@@ -2,6 +2,7 @@ package com.ran.community.like.service;
 
 import com.ran.community.like.dto.response.LikeCountDto;
 import com.ran.community.like.entity.Like;
+import com.ran.community.like.repository.InMemoryLikeRepository;
 import com.ran.community.like.repository.LikeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,10 +13,8 @@ import java.util.List;
 
 @Repository
 public class LikeService {
-    private LikeRepository likeRepository;
+    private final LikeRepository likeRepository;
     private static final Logger logger = LoggerFactory.getLogger(LikeService.class);
-    @Autowired
-    public void setLikeRepository(LikeRepository likeRepository) {}
 
     @Autowired
     public LikeService(LikeRepository likeRepository) {

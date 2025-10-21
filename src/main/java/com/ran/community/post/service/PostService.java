@@ -2,6 +2,7 @@ package com.ran.community.post.service;
 
 import com.ran.community.post.dto.response.PageDto;
 import com.ran.community.post.dto.request.PostCreateFormDto;
+import com.ran.community.post.dto.response.PageMeta;
 import com.ran.community.post.dto.response.PostDataDto;
 import com.ran.community.post.entity.Post;
 import com.ran.community.post.repository.PostRepository;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostService {
@@ -47,6 +49,21 @@ public class PostService {
         return new PostDataDto(post.getPostId(),post.getPostTitle(),post.getPostContent(),post.getPostAuthor(),post.getPostDate(),post.getPostImageUrl());
     }
 
+    //페이지 offset 데이터
+    public PageDto pageOffset(int page, int limit, int numOfContents, int numOfPages, List<Post> offsetNextList){
+        PageDto pageData = new PageDto();
+        PageMeta pageMeta = new PageMeta();
+
+        pageMeta.setPage(page);
+        pageMeta.setLimit(limit);
+        pageMeta.setNumOfContents(numOfContents);
+        pageMeta.setNumOfPages(numOfPages);
+
+        pageData.setOffsetPosts(offsetNextList);
+        pageData.setPageMeta(pageMeta);
+        return pageData;
+    }
+
 
     //page : 현재 페이지 번호
     public PageDto postsRead(int page, int limit){
@@ -63,8 +80,7 @@ public class PostService {
             offsetNextList.add(list.get(idx));
         }
 
-        PageDto pageData = postRepository.pageOffset(page,limit,numOfContents,numOfPages,offsetNextList).orElseThrow(()->new IllegalArgumentException("게시물이 없습니다."));
-        return pageData;
+        return pageOffset(page,limit,numOfContents,numOfPages,offsetNextList);
     }
 
     //전체 게시글 읽기
