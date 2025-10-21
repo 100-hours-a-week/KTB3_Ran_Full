@@ -1,5 +1,8 @@
 package com.ran.community.user.service;
 
+import com.ran.community.post.dto.response.PageDto;
+import com.ran.community.post.dto.response.PageMeta;
+import com.ran.community.post.entity.Post;
 import com.ran.community.user.entity.User;
 import com.ran.community.user.dto.request.UserLoginDto;
 import com.ran.community.user.dto.request.UserSignupFormDto;
@@ -9,6 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -113,5 +119,6 @@ public class UserService {
     public User deletedUser(Long userId) {
         return userRepository.deleteUser(userId).orElseThrow(()-> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
     }
+
 
 }

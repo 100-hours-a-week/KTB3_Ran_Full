@@ -49,21 +49,6 @@ public class InMemoryPostRepository implements PostRepository {
         return Optional.of(new ArrayList<>(Posts.values()));
     }
 
-    //페이지 offset 데이터
-    public Optional<PageDto> pageOffset(int page, int limit,int numOfContents,int numOfPages,List<Post> offsetNextList){
-        PageDto pageData = new PageDto();
-        PageMeta pageMeta = new PageMeta();
-
-        pageMeta.setPage(page);
-        pageMeta.setLimit(limit);
-        pageMeta.setNumOfContents(numOfContents);
-        pageMeta.setNumOfPages(numOfPages);
-
-        pageData.setOffsetPosts(offsetNextList);
-        pageData.setPageMeta(pageMeta);
-        return Optional.of(pageData);
-    }
-
 
     //게시물 수정
     @Override
