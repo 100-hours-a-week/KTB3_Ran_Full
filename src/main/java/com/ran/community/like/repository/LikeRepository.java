@@ -7,15 +7,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class LikeRepository {
-    private long index;
-    private Map<Long, Like> Likes = new LinkedHashMap<>();
-
-    public LikeRepository(){
-        this.index = 0;
-    }
+    private AtomicLong index;
+    private Map<Long, Like> Likes = new ConcurrentHashMap<>();
 
     //likeId로 좋아요 객체 가져오기
     public Optional<Like> getLike(long likeId){
@@ -26,11 +24,10 @@ public class LikeRepository {
     public Like addLike(long userId, long postId){
         Like like = new Like();
 
-        like.setLikeId(index);
+        like.setLikeId(index.getAndIncrement());
         like.setUserId(userId);
         like.setPostId(postId);
         Likes.put(like.getLikeId(), like);
-        index++;
         return like;
     }
     //특정 게시물의 좋아요 리스트 가져오기
