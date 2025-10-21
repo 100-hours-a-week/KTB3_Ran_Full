@@ -25,13 +25,8 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public User addUser(UserSignupFormDto userSignupFormDto) {
-        User user = new User();
-
-        user.setUserId(UserIdGenerator.getInstance().nextId());//값 반환 후 index 증가;
-        user.setPassword(userSignupFormDto.getPassword());
-        user.setUsername(userSignupFormDto.getUsername());
+        User user = new User(UserIdGenerator.getInstance().nextId(),userSignupFormDto.getEmail(),userSignupFormDto.getUsername(),userSignupFormDto.getPassword());
         UsersByEmail.put(userSignupFormDto.getEmail(), user);
-        user.setEmail(userSignupFormDto.getEmail());
         Users.put(user.getUserId(), user);
         return user;
     }
@@ -42,21 +37,19 @@ public class InMemoryUserRepository implements UserRepository {
         return Optional.ofNullable(UsersByEmail.get(email));
     }
 
+    //얘도 Map으로 바꾸면 어때
     @Override
     public Optional<User> findByUsername(String username) {
         return Users.values().stream().filter(it -> it.getUsername().equals(username)).findFirst();
 
     }
 
-    //유저 정보 수정하기 업데이트는 set을 써야하지않아?
     @Override
     public User updateUser(User user, UserSignupFormDto userSignupFormDto) {
-        user.setEmail(userSignupFormDto.getEmail());
-        user.setUsername(userSignupFormDto.getUsername());
-        user.setPassword(userSignupFormDto.getPassword());
-        return user;
+        User updateUser = new User(user.getUserId(),userSignupFormDto.getEmail(),userSignupFormDto.getUsername(),userSignupFormDto.getPassword());
+        Users.put(user.getUserId(),updateUser);
+        return updateUser;
     }
-
 
     @Override
     public Optional<User> deleteUser(long userId) {
