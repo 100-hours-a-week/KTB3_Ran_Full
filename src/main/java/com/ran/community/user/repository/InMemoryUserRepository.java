@@ -14,6 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class InMemoryUserRepository implements UserRepository {
     //DB를 대신하는 Users Map도 Index를 보장 받아야되기 때문에 싱글톤으로 구현
     private final Map<Long, User> Users = new ConcurrentHashMap<>(); //유저 객체를 담는 DB
+    //아 설마 이거 쓰임새가 DB에서 값을 모두 가져와서 해당 Map에 저장하나? 그럴리가
+    private final Map<String, User> UsersByEmail = new ConcurrentHashMap<>();
 
 
     @Override
@@ -28,6 +30,7 @@ public class InMemoryUserRepository implements UserRepository {
         user.setUserId(UserIdGenerator.getInstance().nextId());//값 반환 후 index 증가;
         user.setPassword(userSignupFormDto.getPassword());
         user.setUsername(userSignupFormDto.getUsername());
+        UsersByEmail.put(userSignupFormDto.getEmail(), user);
         user.setEmail(userSignupFormDto.getEmail());
         Users.put(user.getUserId(), user);
         return user;
@@ -36,7 +39,7 @@ public class InMemoryUserRepository implements UserRepository {
     //로직 처리 : false true등은 Service의역할이기 때문에 Repository는 DB에서 값을 가져오는 직접적인 논리만 작성함.
     @Override
     public Optional<User> findByEmail(String email) {
-        return Users.values().stream().filter(it -> it.getEmail().equals(email)).findFirst();
+        return Optional.ofNullable(UsersByEmail.get(email));
     }
 
     @Override
