@@ -1,5 +1,6 @@
 package com.ran.community.like.repository;
 
+import com.ran.community.global.LikeIdGenerator;
 import com.ran.community.like.entity.Like;
 import org.springframework.stereotype.Repository;
 
@@ -11,8 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class InMemoryLikeRepository  implements LikeRepository {
-    private AtomicLong index;
-    private Map<Long, Like> Likes = new ConcurrentHashMap<>();
+    private final Map<Long, Like> Likes = new ConcurrentHashMap<>();
 
     @Override
     public Optional<Like> getLike(long likeId){
@@ -23,7 +23,7 @@ public class InMemoryLikeRepository  implements LikeRepository {
     public Like addLike(long userId, long postId){
         Like like = new Like();
 
-        like.setLikeId(index.getAndIncrement());
+        like.setLikeId(LikeIdGenerator.getInstance().nextId());
         like.setUserId(userId);
         like.setPostId(postId);
         Likes.put(like.getLikeId(), like);
