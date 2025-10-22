@@ -19,13 +19,10 @@ public class InMemoryLikeRepository  implements LikeRepository {
         return Optional.ofNullable(Likes.get(likeId));
     }
 
+
     @Override
     public Like addLike(long userId, long postId){
-        Like like = new Like();
-
-        like.setLikeId(LikeIdGenerator.getInstance().nextId());
-        like.setUserId(userId);
-        like.setPostId(postId);
+        Like like = new Like(LikeIdGenerator.getInstance().nextId(),userId,postId);
         Likes.put(like.getLikeId(), like);
         return like;
     }
