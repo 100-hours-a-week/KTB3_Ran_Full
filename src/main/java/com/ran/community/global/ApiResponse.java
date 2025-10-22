@@ -20,8 +20,8 @@ public class ApiResponse<T> {
     }
 
     //200 : OK success
-    public static <T> ResponseEntity<ApiResponse<T>> success(T data) {
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<T>(HttpStatus.OK.getReasonPhrase(),HttpStatus.OK.value(), "success", data));
+    public static <T> ResponseEntity<ApiResponse<T>> success(T data, String message) {
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<T>(HttpStatus.OK.getReasonPhrase(),HttpStatus.OK.value(), message, data));
     }
 
     //201 : Created
