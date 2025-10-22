@@ -1,5 +1,7 @@
 package com.ran.community.user.dto.response;
 
+import com.ran.community.user.entity.User;
+
 public class UserDataResponseDTO {
     private long userId;
     private String username;
@@ -9,6 +11,12 @@ public class UserDataResponseDTO {
         this.userId = userId;
         this.username = username;
         this.email = email;
+    }
+
+    public UserDataResponseDTO(User user) {
+        this.userId = user.getUserId();
+        this.username = user.getUsername();
+        this.email = user.getEmail();
     }
 
     //get을 이용할 일이 없다고 생각하고 get을 뺏음.

@@ -56,15 +56,14 @@ public class UserService {
     }
 
     //유저 등록 //DTO -> Entity로 변환
-    public void registerUser(UserSignupFormDto userSignupFormDto){
+    public UserDataResponseDTO registerUser(UserSignupFormDto userSignupFormDto){
         duplicateUsername(userSignupFormDto);//중복 닉네임
         duplicateEmail(userSignupFormDto);//중복 이메일
         passwordConfirm(userSignupFormDto);//비밀번호 재 확인
 
         User user = createUser(userSignupFormDto);//유저 저장
         logger.info(user.toString());
-
-        //위에서 저장한 후 응답 DTO를 만들기 위해 userResponse 양식에 맞게 아래에 생성
+        return new UserDataResponseDTO(user);
     }
 
     //비밀번호 재 확인
@@ -103,14 +102,16 @@ public class UserService {
     }
 
     //유저 정보 수정
-    public void updateUser(Long userId, UserSignupFormDto userSignupFormDto) {
+    public UserDataResponseDTO updateUser(Long userId, UserSignupFormDto userSignupFormDto) {
         //유저 찾기
-        userRepository.updateUser(getUser(userId), userSignupFormDto);
+        User user = userRepository.updateUser(getUser(userId), userSignupFormDto);
+        return new UserDataResponseDTO(user);
     }
 
     //유저 정보 삭제
-    public void deletedUser(Long userId) {
-        userRepository.deleteUser(userId).orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+    public UserDataResponseDTO deletedUser(Long userId) {
+        User user = userRepository.deleteUser(userId).orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+        return new UserDataResponseDTO(user);
     }
 
 
