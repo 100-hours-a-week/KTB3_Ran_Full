@@ -9,10 +9,9 @@ public class PageDto {
     private PageMeta pageMeta;
     private List<Post> offsetPosts;
 
-    public PageDto() {}
-    public PageDto(int numOfContents, int limit, int numOfPages, int page, List<Post> offsetPosts) {
-        this.pageMeta = new PageMeta(numOfContents, limit, numOfPages, page);
-        this.offsetPosts = new ArrayList<Post>();
+    public PageDto(PageMeta pageMeta, List<Post> offsetPosts) {
+        this.pageMeta = pageMeta;
+        this.offsetPosts = offsetPosts;
     }
     public PageMeta getPageMeta() {
         return pageMeta;
