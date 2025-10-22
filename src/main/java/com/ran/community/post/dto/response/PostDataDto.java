@@ -4,17 +4,17 @@ package com.ran.community.post.dto.response;
 import com.ran.community.user.entity.User;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public class PostDataDto {
     private long postId;
     private String postTitle;
     private String postContent;
     private long postAuthor;//User에게서 가져오기 FK //게시물 만든이
-    private String postImageUrl;
+    private Optional<String> postImageUrl;
     private LocalDateTime postDate;
 
-    public PostDataDto() {}
-    public PostDataDto(long postId, String postTitle, String postContent, long postAuthor, LocalDateTime postDate, String postImageUrl) {
+    public PostDataDto(long postId, String postTitle, String postContent, long postAuthor, LocalDateTime postDate, Optional<String> postImageUrl) {
         this.postId = postId;
         this.postTitle = postTitle;
         this.postContent = postContent;
@@ -63,10 +63,10 @@ public class PostDataDto {
         this.postDate = LocalDateTime.now();
     }
 
-    public String getPostImageUrl() {
+    public Optional<String> getPostImageUrl() {
         return postImageUrl;
     }
-    public void setPostImageUrl(String postImageUrl) {
+    public void setPostImageUrl(Optional<String> postImageUrl) {
         this.postImageUrl = postImageUrl;
     }
 }
