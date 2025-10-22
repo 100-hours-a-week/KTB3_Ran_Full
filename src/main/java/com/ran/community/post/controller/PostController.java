@@ -41,7 +41,7 @@ public class PostController {
         User user = userService.getUser((long) httpSession.getAttribute("userId"));
         //로그인된 user의 객체도 함께 사용
         PostDataDto postDataDto= postService.postCreate(user,postCreateFormDto);
-        return ApiResponse.success(postDataDto,"created_post");
+        return ApiResponse.created(postDataDto,"created_post");
     }
 
     //특정 게시물 조회 //✅
@@ -81,7 +81,7 @@ public class PostController {
     public ResponseEntity<ApiResponse<LikeDataDto>> like(@PathVariable Long postId, HttpSession session) {
         long userId = (long) session.getAttribute("userId");
         LikeDataDto likeDataDto =likeService.addLike(userId,postId);
-        return ApiResponse.success(likeDataDto,"like");
+        return ApiResponse.created(likeDataDto,"like");
     }
 
     //특정 게시물의 좋아요 삭제
