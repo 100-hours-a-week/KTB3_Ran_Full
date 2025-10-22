@@ -46,6 +46,7 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public User updateUser(User user, UserSignupFormDto userSignupFormDto) {
+        deleteUser(user.getUserId());
         User updateUser = new User(user.getUserId(),userSignupFormDto.getEmail(),userSignupFormDto.getUsername(),userSignupFormDto.getPassword());
         Users.put(user.getUserId(),updateUser);
         return updateUser;

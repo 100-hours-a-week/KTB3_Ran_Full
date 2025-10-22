@@ -34,6 +34,7 @@ public class InMemoryCommentRepository  implements CommentRepository {
 
     @Override
     public Optional<Comment> commentUpdate(Comment comment, CommentInputDto commentInputDto) {
+        commentDelete(comment);
         Comment commentUpdate = new Comment(comment.getCommentId(),commentInputDto.getContent(),comment.getAuthorId(),comment.getPostId());
         return Optional.of(commentUpdate);
     }

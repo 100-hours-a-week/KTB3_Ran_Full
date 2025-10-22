@@ -41,6 +41,7 @@ public class InMemoryPostRepository implements PostRepository {
     //게시물 수정
     @Override
     public Optional<Post> updatePost(Post post, PostCreateFormDto postCreateFormDto){
+        deletePost(post.getPostId());//기존 객체 삭제
         Post updatePost = new Post(post.getPostId(), postCreateFormDto.getTitle(), postCreateFormDto.getContent(),post.getPostAuthor(),postCreateFormDto.getImageUrl());
         return Optional.of(updatePost);
     }
