@@ -56,7 +56,7 @@ public class UserService {
     }
 
     //유저 등록 //DTO -> Entity로 변환
-    public UserDataResponseDTO registerUser(UserSignupFormDto userSignupFormDto){
+    public void registerUser(UserSignupFormDto userSignupFormDto){
         duplicateUsername(userSignupFormDto);//중복 닉네임
         duplicateEmail(userSignupFormDto);//중복 이메일
         passwordConfirm(userSignupFormDto);//비밀번호 재 확인
@@ -65,7 +65,6 @@ public class UserService {
         logger.info(user.toString());
 
         //위에서 저장한 후 응답 DTO를 만들기 위해 userResponse 양식에 맞게 아래에 생성
-        return new UserDataResponseDTO(user.getUserId(), user.getUsername(), user.getEmail());//어떤 유저를 등록했는지
     }
 
     //비밀번호 재 확인
