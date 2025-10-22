@@ -22,24 +22,12 @@ public class Like {
         return likeId;
     }
 
-    public void setLikeId(long likeId) {
-        this.likeId = likeId;
-    }
-
     public long getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
     public long getPostId() {
         return postId;
-    }
-
-    public void setPostId(long postId) {
-        this.postId = postId;
     }
 
     public LocalDateTime getLikeTime() {
