@@ -18,11 +18,18 @@ public class CommentService {
 
     private static final Logger logger = LoggerFactory.getLogger(CommentService.class);
 
-    //private으로 메서드를 만드는 이유?
-
     @Autowired
     public CommentService(CommentRepository commentRepository) {
         this.commentRepository = commentRepository;
+    }
+
+    //private
+    //본인이 작성한 댓글만 상태를 변경할 수 있음.(본인확인)
+    //해당 클래스 안에서만 유의미한 메서드이기 때문에 다른 클래스에서 검증로직을 무분별하게 사용할 수 있음.
+    private void validationUser(long userId, long postId, Comment comment){
+        if(comment.getAuthorId()!=userId || comment.getPostId()!=postId){
+            throw new IllegalArgumentException("댓글을 수정할 권한이 없습니다.");
+        }
     }
 
     //식별자로 찾기
@@ -49,23 +56,22 @@ public class CommentService {
     public void commentUpdate(long userId, long postId, long commentId, CommentInputDto commentInputDto) {
         //내껏만 가능
         Comment comment = getComment(commentId);
-        if(comment.getAuthorId()==userId && comment.getPostId()==postId){ //여기 중복
-            Comment cmt = commentRepository.commentUpdate(comment, commentInputDto).orElseThrow(()->new IllegalArgumentException("댓글이 존재하지 않습니다."));
-            logger.info(cmt.toString());
-        }else{
-            throw new IllegalArgumentException("댓글을 수정할 권한이 없습니다.");
-        }
+        validationUser(userId,postId,comment);//수정권한 확인
+
+        Comment cmt = commentRepository.commentUpdate(comment, commentInputDto).orElseThrow(()->new IllegalArgumentException("댓글이 존재하지 않습니다."));
+        logger.info(cmt.toString());
+
 
     }
 
     //댓글 삭제
     public void commentDelete(long userId, long postId, long commentId) {
         Comment comment = getComment(commentId);
-        if(comment.getAuthorId()==userId && comment.getPostId()==postId){ //여기 중복
-            commentRepository.commentDelete(comment).orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
-        }else{
-            throw new IllegalArgumentException("댓글을 수정할 권한이 없습니다.");
-        }
+        validationUser(userId,postId,comment); //수정권한 확인
+
+        Comment cmt = commentRepository.commentDelete(comment).orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
+        logger.info(cmt.toString());
     }
+
 
 }
