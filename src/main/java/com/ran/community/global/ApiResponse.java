@@ -25,7 +25,7 @@ public class ApiResponse<T> {
     }
 
     //201 : Created
-    public static <T> ResponseEntity<ApiResponse<T>> created(T data) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<T>(HttpStatus.CREATED.getReasonPhrase(),HttpStatus.CREATED.value(), "success", data));
+    public static <T> ResponseEntity<ApiResponse<T>> created(T data, String message) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<T>(HttpStatus.CREATED.getReasonPhrase(),HttpStatus.CREATED.value(), message, data));
     }
 }
