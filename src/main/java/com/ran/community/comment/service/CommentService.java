@@ -1,6 +1,6 @@
 package com.ran.community.comment.service;
 
-import com.ran.community.comment.dto.response.CommentResponseDTO;
+import com.ran.community.comment.dto.response.CommentDataDTO;
 import com.ran.community.comment.entity.Comment;
 import com.ran.community.comment.dto.request.CommentInputDto;
 import com.ran.community.comment.repository.CommentRepository;
@@ -38,39 +38,41 @@ public class CommentService {
     }
 
     //특정 게시글(postId)의 댓글 가져오기
-    public List<CommentResponseDTO> commentListByPostId(Long postId) {
+    public List<CommentDataDTO> commentListByPostId(Long postId) {
         List<Comment> comments = commentRepository.commentListByPostId(postId).orElseThrow(()->new IllegalArgumentException("댓글이 없습니다."));
 
-        List<CommentResponseDTO> cmtResponseDTO = comments.stream().map(comment -> new CommentResponseDTO(comment.getCommentId(),comment.getContent(),comment.getAuthorId(),comment.getPostTime())).collect(Collectors.toList());
+        List<CommentDataDTO> cmtResponseDTO = comments.stream().map(comment -> new CommentDataDTO(comment.getCommentId(),comment.getContent(),comment.getAuthorId(),comment.getPostTime())).collect(Collectors.toList());
         logger.info(cmtResponseDTO.toString());
         return cmtResponseDTO;
     }
 
     //댓글 생성
-    public void commentCreate(long userId, long postId, CommentInputDto commentInputDto) {
+    public CommentDataDTO commentCreate(long userId, long postId, CommentInputDto commentInputDto) {
         Comment cmt = commentRepository.commentCreate(userId, postId, commentInputDto);
         logger.info(cmt.toString());
+        return new CommentDataDTO(cmt);
     }
 
     //댓글 수정
-    public void commentUpdate(long userId, long postId, long commentId, CommentInputDto commentInputDto) {
+    public CommentDataDTO commentUpdate(long userId, long postId, long commentId, CommentInputDto commentInputDto) {
         //내껏만 가능
         Comment comment = getComment(commentId);
         validationUser(userId,postId,comment);//수정권한 확인
 
         Comment cmt = commentRepository.commentUpdate(comment, commentInputDto).orElseThrow(()->new IllegalArgumentException("댓글이 존재하지 않습니다."));
         logger.info(cmt.toString());
-
+        return new CommentDataDTO(cmt);
 
     }
 
     //댓글 삭제
-    public void commentDelete(long userId, long postId, long commentId) {
+    public CommentDataDTO commentDelete(long userId, long postId, long commentId) {
         Comment comment = getComment(commentId);
         validationUser(userId,postId,comment); //수정권한 확인
 
         Comment cmt = commentRepository.commentDelete(comment).orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
         logger.info(cmt.toString());
+        return new CommentDataDTO(cmt);
     }
 
 
