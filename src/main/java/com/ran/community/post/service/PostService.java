@@ -51,16 +51,9 @@ public class PostService {
 
     //페이지 offset 데이터
     public PageDto pageOffset(int page, int limit, int numOfContents, int numOfPages, List<Post> offsetNextList){
-        PageDto pageData = new PageDto();
-        PageMeta pageMeta = new PageMeta();
-
-        pageMeta.setPage(page);
-        pageMeta.setLimit(limit);
-        pageMeta.setNumOfContents(numOfContents);
-        pageMeta.setNumOfPages(numOfPages);
-
-        pageData.setOffsetPosts(offsetNextList);
-        pageData.setPageMeta(pageMeta);
+        PageMeta pageMeta = new PageMeta(numOfContents,limit,numOfPages,page);
+        PageDto pageData = new PageDto(pageMeta,offsetNextList);
+        logger.info(pageData.toString());
         return pageData;
     }
 
