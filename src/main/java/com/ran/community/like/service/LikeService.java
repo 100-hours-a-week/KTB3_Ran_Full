@@ -1,6 +1,7 @@
 package com.ran.community.like.service;
 
 import com.ran.community.like.dto.response.LikeCountDto;
+import com.ran.community.like.dto.response.LikeDataDto;
 import com.ran.community.like.entity.Like;
 import com.ran.community.like.repository.InMemoryLikeRepository;
 import com.ran.community.like.repository.LikeRepository;
@@ -27,7 +28,7 @@ public class LikeService {
 
     //특정 게시물에서 좋아요 생성
     //중복 안됨
-    public Like addLike(long userId, long postId){
+    public LikeDataDto addLike(long userId, long postId){
         //리스트 안에 postId안에 userId가 있을 경우 생성안됨
         List<Like> likeList = likeRepository.getLikeListByPostId(postId).orElseThrow(()->new IllegalArgumentException("좋아요가 없습니다."));
         for(Like like:likeList){
@@ -40,12 +41,13 @@ public class LikeService {
         //좋아요를 누르지 않았을 경우
         Like like = likeRepository.addLike(userId,postId);
         logger.info(like.toString());
-        return like;
+        return new LikeDataDto(like);
     }
 
     //특정 게시물에서 좋아요 삭제
-    public Like removeLike(long userId, long postId){
-        return likeRepository.deleteLike(userId,postId).orElseThrow(()->new IllegalArgumentException("좋아요가 없습니다."));
+    public LikeDataDto removeLike(long userId, long postId){
+        Like like = likeRepository.deleteLike(userId,postId).orElseThrow(()->new IllegalArgumentException("좋아요가 없습니다."));
+        return new LikeDataDto(like);
     }
 
     //특정 게시물에서 좋아요 갯수 조회
