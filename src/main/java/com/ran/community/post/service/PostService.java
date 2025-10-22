@@ -29,25 +29,28 @@ public class PostService {
 
     //식별자로 찾기
     public Post getPost(Long postId) {
-        return postRepository.getPost(postId).orElseThrow(()->new IllegalArgumentException("게시물을 찾을 수 없습니다."));
+        Post post = postRepository.getPost(postId).orElseThrow(()->new IllegalArgumentException("게시물을 찾을 수 없습니다."));
+        return post;
     }
 
 
     //생성하기
-    public Post postCreate(User user, PostCreateFormDto postCreateFormDto) {
-        return postRepository.postCreate(user,postCreateFormDto);
+    public PostDataDto postCreate(User user, PostCreateFormDto postCreateFormDto) {
+        Post post = postRepository.postCreate(user,postCreateFormDto);
+        return new PostDataDto(post);
     }
 
-    //특정 게시물 조회
-    public Post postRead(Long postId) {
-        return postRepository.getPost(postId).orElseThrow(()->new IllegalArgumentException("게시물을 찾을 수 없습니다."));
+    //특정 게시물 조회 -> 조회로 하기 때문에 빨리 탐색하기 위해 Map으로 조회하는 것이었음.
+    public PostDataDto postRead(Long postId) {
+        Post post = postRepository.getPost(postId).orElseThrow(()->new IllegalArgumentException("게시물을 찾을 수 없습니다."));
+        return new PostDataDto(post);
     }
 
-    //특정 게시물을 조회해서 data json으로 변형
-    public PostDataDto postReadData(Long postId) {
-        Post post = postRead(postId);
-        return new PostDataDto(post.getPostId(),post.getPostTitle(),post.getPostContent(),post.getPostAuthor(),post.getPostDate(),post.getPostImageUrl());
-    }
+    //특정 게시물을 조회해서 data json으로 변형 //이게 무슨 코드지?
+//    public PostDataDto postReadData(Long postId) {
+//        Post post = postRead(postId);
+//        return new PostDataDto(post.getPostId(),post.getPostTitle(),post.getPostContent(),post.getPostAuthor(),post.getPostDate(),post.getPostImageUrl());
+//    }
 
     //페이지 offset 데이터
     public PageDto pageOffset(int page, int limit, int numOfContents, int numOfPages, List<Post> offsetNextList){
@@ -82,16 +85,16 @@ public class PostService {
     }
 
     //게시물 수정
-    public Post updatePost(Long postId, PostCreateFormDto postCreateFormDto) {
+    public PostDataDto updatePost(Long postId, PostCreateFormDto postCreateFormDto) {
         Post post = postRepository.updatePost(getPost(postId),postCreateFormDto).orElseThrow(()->new IllegalArgumentException("게시물을 찾을 수 없습니다."));
         logger.info(post.toString());
-        return post;
+        return new PostDataDto(post);
     }
 
     //게시물 삭제
-    public Post deletePost(Long postId) {
+    public PostDataDto deletePost(Long postId) {
         Post post = postRepository.deletePost(postId).orElseThrow(()->new IllegalArgumentException("게시물을 찾을 수 없습니다."));
         logger.info(post.toString());
-        return post;
+        return new PostDataDto(post);
     }
 }
