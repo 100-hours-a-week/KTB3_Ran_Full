@@ -22,7 +22,7 @@ public class InMemoryCommentRepository  implements CommentRepository {
 
     @Override
     public Comment commentCreate(long userId, long postId, CommentInputDto commentInputDto){
-        Comment comment = new Comment(CommentIdGenerator.getInstance().nextId(),commentInputDto.getComment(),userId,postId);
+        Comment comment = new Comment(CommentIdGenerator.getInstance().nextId(),commentInputDto.getContent(),userId,postId);
         Comments.put(comment.getCommentId(), comment);
         return comment;
     }
@@ -34,7 +34,7 @@ public class InMemoryCommentRepository  implements CommentRepository {
 
     @Override
     public Optional<Comment> commentUpdate(Comment comment, CommentInputDto commentInputDto) {
-        Comment commentUpdate = new Comment(comment.getCommentId(),commentInputDto.getComment(),comment.getAuthorId(),comment.getPostId());
+        Comment commentUpdate = new Comment(comment.getCommentId(),commentInputDto.getContent(),comment.getAuthorId(),comment.getPostId());
         return Optional.of(commentUpdate);
     }
 
