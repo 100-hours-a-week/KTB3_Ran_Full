@@ -6,7 +6,6 @@ public class PageMeta {
     private int numOfPages;
     private int page;
 
-    public PageMeta() {}
     public PageMeta(int numOfContents, int limit, int numOfPages, int page) {
         this.numOfContents = numOfContents;
         this.limit = limit;
