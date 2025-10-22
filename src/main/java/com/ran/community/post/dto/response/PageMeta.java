@@ -17,25 +17,13 @@ public class PageMeta {
     public int getNumOfContents() {
         return numOfContents;
     }
-    public void setNumOfContents(int numOfContents) {
-        this.numOfContents = numOfContents;
-    }
     public int getLimit() {
         return limit;
-    }
-    public void setLimit(int limit) {
-        this.limit = limit;
     }
     public int getNumOfPages() {
         return numOfPages;
     }
-    public void setNumOfPages(int numOfPages) {
-        this.numOfPages = numOfPages;
-    }
     public int getPage() {
         return page;
-    }
-    public void setPage(int page) {
-        this.page = page;
     }
 }

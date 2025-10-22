@@ -16,14 +16,8 @@ public class PageDto {
     public PageMeta getPageMeta() {
         return pageMeta;
     }
-    public void setPageMeta(PageMeta pageMeta) {
-        this.pageMeta = pageMeta;
-    }
 
     public List<Post> getOffsetPosts() {
         return offsetPosts;
-    }
-    public void setOffsetPosts(List<Post> offsetPosts) {
-        this.offsetPosts = offsetPosts;
     }
 }

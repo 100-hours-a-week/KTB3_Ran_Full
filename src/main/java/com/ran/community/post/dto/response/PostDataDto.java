@@ -27,46 +27,23 @@ public class PostDataDto {
         return postId;
     }
 
-    public void setPostId(long postId) {
-        this.postId = postId;
-    }
-
     public String getPostTitle() {
         return postTitle;
-    }
-
-    public void setPostTitle(String postTitle) {
-        this.postTitle = postTitle;
     }
 
     public String getPostContent() {
         return postContent;
     }
 
-    public void setPostContent(String postContent) {
-        this.postContent = postContent;
-    }
-
     public long getPostAuthor() {
         return postAuthor;
-    }
-
-    public void setPostAuthor(long postAuthor) {
-        this.postAuthor = postAuthor;
     }
 
     public LocalDateTime getPostDate() {
         return postDate;
     }
 
-    public void setPostDate() {
-        this.postDate = LocalDateTime.now();
-    }
-
     public Optional<String> getPostImageUrl() {
         return postImageUrl;
-    }
-    public void setPostImageUrl(Optional<String> postImageUrl) {
-        this.postImageUrl = postImageUrl;
     }
 }

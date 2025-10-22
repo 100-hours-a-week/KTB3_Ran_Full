@@ -11,13 +11,7 @@ public class LikeCountDto {
     public int getCount() {
         return count;
     }
-    public void setCount(int count) {
-        this.count = count;
-    }
     public long getPostId() {
         return postId;
-    }
-    public void setPostId(long postId) {
-        this.postId = postId;
     }
 }
