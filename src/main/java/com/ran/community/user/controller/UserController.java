@@ -31,7 +31,7 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody UserSignupFormDto userSignupFormDto) {
         UserDataResponseDTO userDataResponseDTO = userService.registerUser(userSignupFormDto);
-        return ApiResponse.created(userDataResponseDTO);
+        return ApiResponse.created(userDataResponseDTO,"user_signup_success");
     }
 
     //로그인 //✅
