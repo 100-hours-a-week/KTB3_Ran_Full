@@ -40,28 +40,28 @@ public class UserController {
         UserDataResponseDTO userDataResponseDTO = userService.login(userLoginDto);
 
         httpSession.setAttribute("userId", userDataResponseDTO.getUserId());
-        return ApiResponse.success(userDataResponseDTO);
+        return ApiResponse.success(userDataResponseDTO,"login_success");
     }
 
     //회원 정보 조회 //✅
     @GetMapping("/{userId}")
     public ResponseEntity<?> userInfo(@PathVariable Long userId){
         UserDataResponseDTO userDataResponseDTO = userService.getUserData(userId);
-        return ApiResponse.success(userDataResponseDTO);
+        return ApiResponse.success(userDataResponseDTO,"read_user");
     }
 
     //회원 정보 수정 //✅
     @PatchMapping("/{userId}")
     public ResponseEntity<?> userPatchInfo(@Valid @PathVariable Long userId,@RequestBody UserSignupFormDto userSignupFormDto){
         UserDataResponseDTO userDataResponseDTO = userService.updateUser(userId,userSignupFormDto);
-        return ApiResponse.success(userDataResponseDTO);
+        return ApiResponse.success(userDataResponseDTO,"user_update");
     }
 
     //회원 탈퇴 //✅
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> userDelete(@PathVariable Long userId){
         UserDataResponseDTO userDataResponseDTO = userService.deletedUser(userId);
-        return ApiResponse.success(userDataResponseDTO);
+        return ApiResponse.success(userDataResponseDTO,"user_delete");
     }
 
 }
