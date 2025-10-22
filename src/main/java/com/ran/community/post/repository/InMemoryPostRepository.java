@@ -6,6 +6,7 @@ import com.ran.community.post.dto.response.PageMeta;
 import com.ran.community.post.dto.request.PostCreateFormDto;
 import com.ran.community.post.entity.Post;
 import com.ran.community.user.entity.User;
+import com.ran.community.user.repository.InMemoryUserRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -15,7 +16,6 @@ import java.util.concurrent.atomic.AtomicLong;
 @Repository
 public class InMemoryPostRepository implements PostRepository {
     private Map<Long, Post> Posts = new ConcurrentHashMap<>();
-
 
     //게시글 생성
     @Override
@@ -30,12 +30,6 @@ public class InMemoryPostRepository implements PostRepository {
     public Optional<Post> getPost(long postId){
         return Optional.ofNullable(Posts.get(postId));
     }
-//
-//    //컨텐츠
-//    public Optional<Map<Long, PostDto>> getPosts(){
-//        //총 컨텐츠 수 구하기
-//        return Optional.of(Posts);
-//    }
 
     //전체 리스트 생성
     @Override
