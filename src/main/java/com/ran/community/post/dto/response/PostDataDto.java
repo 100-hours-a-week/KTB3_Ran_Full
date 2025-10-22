@@ -1,6 +1,7 @@
 package com.ran.community.post.dto.response;
 
 
+import com.ran.community.post.entity.Post;
 import com.ran.community.user.entity.User;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,15 @@ public class PostDataDto {
         this.postAuthor = postAuthor;
         this.postDate = postDate;
         this.postImageUrl = postImageUrl;
+    }
+
+    public PostDataDto(Post post) {
+        this.postId = post.getPostId();
+        this.postTitle = post.getPostTitle();
+        this.postContent = post.getPostContent();
+        this.postAuthor = post.getPostAuthor();
+        this.postDate = post.getPostDate();
+        this.postImageUrl = post.getPostImageUrl();
     }
 
     public long getPostId() {
