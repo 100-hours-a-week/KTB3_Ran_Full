@@ -1,5 +1,6 @@
 package com.ran.community.user.controller;
 
+import com.ran.community.global.ApiResponse;
 import com.ran.community.user.entity.User;
 import com.ran.community.user.dto.request.UserLoginDto;
 import com.ran.community.user.dto.request.UserSignupFormDto;
@@ -29,11 +30,12 @@ public class UserController {
         this.userService = userService;
     }
 
+
     //회원 가입 //✅
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody UserSignupFormDto userSignupFormDto) {
         userService.registerUser(userSignupFormDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message","signup_success"));
+        return ApiResponse.created(userSignupFormDto);
     }
 
     //로그인 //✅
@@ -42,28 +44,28 @@ public class UserController {
         UserDataResponseDTO userDataResponseDTO = userService.login(userLoginDto);
         //로그인 성공 시 세션에 유저 정보 저장해야됨!!
         httpSession.setAttribute("userId", userDataResponseDTO.getUserId());
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","login_success","userResponse", userDataResponseDTO));
+        return ApiResponse.success(userLoginDto);
     }
 
     //회원 정보 조회 //✅
     @GetMapping("/{userId}")
     public ResponseEntity<?> userInfo(@PathVariable Long userId){
         UserDataResponseDTO userDataResponseDTO = userService.getUserData(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","user_confirm","data", userDataResponseDTO));
+        return ApiResponse.success(userDataResponseDTO);
     }
 
     //회원 정보 수정 //✅
     @PatchMapping("/{userId}")
     public ResponseEntity<?> userPatchInfo(@Valid @PathVariable Long userId,@RequestBody UserSignupFormDto userSignupFormDto){
         userService.updateUser(userId,userSignupFormDto);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","Patch_user"));
+        return ApiResponse.success(userSignupFormDto);
     }
 
     //회원 탈퇴 //✅
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> userDelete(@PathVariable Long userId){
         userService.deletedUser(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","user_delete"));
+        return ApiResponse.success(userId);
     }
 
 }
