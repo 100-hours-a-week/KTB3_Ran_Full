@@ -11,11 +11,10 @@ public class Like {
     private long postId;
     private LocalDateTime likeTime;
 
-    public Like() {}
-    public Like(long likeId, User user, Post post) {
+    public Like(long likeId, long userId, long postId) {
         this.likeId = likeId;
-        this.userId = user.getUserId();
-        this.postId = post.getPostId();
+        this.userId = userId;
+        this.postId = postId;
         this.likeTime = LocalDateTime.now();
     }
 
