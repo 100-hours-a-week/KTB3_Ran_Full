@@ -1,5 +1,6 @@
 package com.ran.community.post.repository;
 
+import com.ran.community.global.IdGeneratorFactory;
 import com.ran.community.global.PostIdGenerator;
 import com.ran.community.post.dto.response.PageDto;
 import com.ran.community.post.dto.response.PageMeta;
@@ -7,6 +8,7 @@ import com.ran.community.post.dto.request.PostCreateFormDto;
 import com.ran.community.post.entity.Post;
 import com.ran.community.user.entity.User;
 import com.ran.community.user.repository.InMemoryUserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -15,12 +17,20 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class InMemoryPostRepository implements PostRepository {
-    private Map<Long, Post> Posts = new ConcurrentHashMap<>();
+    private final Map<Long, Post> Posts = new ConcurrentHashMap<>();
+    private final IdGeneratorFactory idGeneratorFactory;
+
+    @Autowired
+    public InMemoryPostRepository(IdGeneratorFactory idGeneratorFactory) {
+        this.idGeneratorFactory = idGeneratorFactory;
+    }
+
 
     //게시글 생성
     @Override
     public Post postCreate(User user, PostCreateFormDto postCreateFormDto){
-        Post post = new Post(PostIdGenerator.getInstance().nextId(),postCreateFormDto.getTitle(),postCreateFormDto.getContent(),user.getUserId(),null);
+        long id = idGeneratorFactory.nextId(Post.class);
+        Post post = new Post(id,postCreateFormDto.getTitle(),postCreateFormDto.getContent(),user.getUserId(),null);
         Posts.put(post.getPostId(), post);
         return post;
     }
