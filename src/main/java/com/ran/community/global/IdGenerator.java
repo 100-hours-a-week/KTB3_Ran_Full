@@ -10,3 +10,4 @@ public abstract class IdGenerator {
         return index.getAndIncrement();
     }
 }
+//아 내가 애초에 IdGenerator를 구현해서 넣을 때 싱글톤으로 Id값을 최신 상태로 만드는 로직만 따로 구현해둔거구나.
