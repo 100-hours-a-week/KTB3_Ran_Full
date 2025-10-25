@@ -30,7 +30,4 @@ public class User {
         return password;
     }
 
-    public String toString(){
-        return username + " " + userId + " " + email + " " + password;
-    }
 }
