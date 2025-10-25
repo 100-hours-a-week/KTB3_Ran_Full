@@ -6,6 +6,8 @@ import com.ran.community.user.entity.User;
 import java.util.Optional;
 
 public interface UserRepository {
+
+
     //특정 유저 가져오기
     Optional<User> getUser(long userId);
 

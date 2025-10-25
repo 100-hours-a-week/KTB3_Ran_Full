@@ -1,8 +1,10 @@
 package com.ran.community.user.repository;
 
+import com.ran.community.global.IdGeneratorFactory;
 import com.ran.community.global.UserIdGenerator;
 import com.ran.community.user.entity.User;
 import com.ran.community.user.dto.request.UserSignupFormDto;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
@@ -16,6 +18,12 @@ public class InMemoryUserRepository implements UserRepository {
     private final Map<Long, User> Users = new ConcurrentHashMap<>(); //유저 객체를 담는 DB
     //아 설마 이거 쓰임새가 DB에서 값을 모두 가져와서 해당 Map에 저장하나? 그럴리가
     private final Map<String, User> UsersByEmail = new ConcurrentHashMap<>();
+    private final IdGeneratorFactory idGeneratorFactory;
+
+    @Autowired
+    private InMemoryUserRepository(IdGeneratorFactory idGeneratorFactory) {
+        this.idGeneratorFactory = idGeneratorFactory;
+    };
 
 
     @Override
@@ -25,7 +33,8 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public User addUser(UserSignupFormDto userSignupFormDto) {
-        User user = new User(UserIdGenerator.getInstance().nextId(),userSignupFormDto.getEmail(),userSignupFormDto.getUsername(),userSignupFormDto.getPassword());
+        long id = idGeneratorFactory.nextId(User.class); //해당 Id가 idMap에 저장 또는 숫자 증가.
+        User user = new User(id,userSignupFormDto.getEmail(),userSignupFormDto.getUsername(),userSignupFormDto.getPassword());
         UsersByEmail.put(userSignupFormDto.getEmail(), user);
         Users.put(user.getUserId(), user);
         return user;
