@@ -2,17 +2,13 @@ package com.ran.community.global;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-public class PostIdGenerator {
+public class PostIdGenerator extends IdGenerator {
     private static final PostIdGenerator INSTANCE = new PostIdGenerator();
-    private final AtomicLong index = new AtomicLong(0);
 
+    //생성자
     private PostIdGenerator() {}
 
-    //증가 시킴
-    public long nextId() {
-        return index.getAndIncrement();
-    }
-
+    //반환값만 해당 메서드에서 관리
     public static PostIdGenerator getInstance() {
         return INSTANCE;
     }
