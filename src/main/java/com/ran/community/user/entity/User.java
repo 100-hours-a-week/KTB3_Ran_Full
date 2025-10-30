@@ -1,7 +1,16 @@
 package com.ran.community.user.entity;
 
-//Entity라고 생각
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.Getter;
+
+@Entity
+@Getter
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userId;
     private String email;
     private String username;
@@ -12,22 +21,6 @@ public class User {
         this.email = email;
         this.username = username;
         this.password = password;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public String getEmail(){
-        return email;
-    }
-
-    public String getUsername(){
-        return username;
-    }
-
-    public String getPassword(){
-        return password;
     }
 
 }
