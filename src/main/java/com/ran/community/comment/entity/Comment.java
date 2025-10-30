@@ -2,10 +2,16 @@ package com.ran.community.comment.entity;
 
 import com.ran.community.post.entity.Post;
 import com.ran.community.user.entity.User;
+import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Entity
+@Getter
 public class Comment {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long commentId;
     private String content;
     private long authorId;
@@ -18,21 +24,5 @@ public class Comment {
         this.authorId = authorId;
         this.postId = postId;
         this.postTime = LocalDateTime.now();
-    }
-
-    public long getCommentId() {
-        return commentId;
-    }
-    public String getContent() {
-        return content;
-    }
-    public long getAuthorId() {
-        return authorId;
-    }
-    public Long getPostId() {
-        return postId;
-    }
-    public LocalDateTime getPostTime() {
-        return postTime;
     }
 }
