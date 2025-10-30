@@ -1,11 +1,20 @@
 package com.ran.community.post.entity;
 
 import com.ran.community.user.entity.User;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+@Entity
+@Getter
 public class Post {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long postId;
     private String postTitle;
     private String postContent;
@@ -20,30 +29,5 @@ public class Post {
         this.postAuthor = postAuthor; //이게 맞나?
         this.postDate = LocalDateTime.now();
         this.postImageUrl = Optional.ofNullable(postImageUrl);
-    }
-
-    public long getPostId() {
-        return postId;
-    }
-
-    public String getPostTitle() {
-        return postTitle;
-    }
-
-
-    public String getPostContent() {
-        return postContent;
-    }
-
-    public long getPostAuthor() {
-        return postAuthor;
-    }
-
-    public LocalDateTime getPostDate() {
-        return postDate;
-    }
-
-    public Optional<String> getPostImageUrl() {
-        return postImageUrl;
     }
 }
