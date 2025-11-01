@@ -4,7 +4,6 @@ import com.ran.community.comment.entity.Comment;
 import com.ran.community.global.entity.AuditingEntity;
 import com.ran.community.post.entity.Post;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,7 +16,7 @@ import java.util.List;
 public class User extends AuditingEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "name_id")
+    @Column(name = "user_id")
     private long id;
 
     @Column(length = 50, name = "email", nullable = false)
@@ -29,10 +28,10 @@ public class User extends AuditingEntity {
     @Column(length = 255, name = "password", nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Post> posts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "comment")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
 }

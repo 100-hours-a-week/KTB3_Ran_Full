@@ -4,11 +4,9 @@ import com.ran.community.global.entity.AuditingEntity;
 import com.ran.community.post.entity.Post;
 import com.ran.community.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
