@@ -1,28 +1,42 @@
 package com.ran.community.comment.entity;
 
+import com.ran.community.global.entity.AuditingEntity;
 import com.ran.community.post.entity.Post;
 import com.ran.community.user.entity.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-public class Comment {
+@NoArgsConstructor
+public class Comment extends AuditingEntity {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "comment_id")
     private long commentId;
-    private String content;
-    private long authorId;
-    private long postId;
-    private LocalDateTime postTime;
 
-    public Comment(long commentId, String content, long authorId, long postId) {
-        this.commentId = commentId;
+    @Column(length = 255, name="content",nullable = false)
+    private String content;
+
+    //양방향
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id",nullable = false)
+    private User user;
+
+    //단방향
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id",nullable = false)
+    private Post post;
+
+    public Comment(String content, User user, Post post) {
         this.content = content;
-        this.authorId = authorId;
-        this.postId = postId;
-        this.postTime = LocalDateTime.now();
+        this.user = user;
+        this.post = post;
     }
+
 }

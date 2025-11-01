@@ -1,5 +1,6 @@
 package com.ran.community.like.entity;
 
+import com.ran.community.global.entity.AuditingEntity;
 import com.ran.community.post.entity.Post;
 import com.ran.community.user.entity.User;
 import jakarta.persistence.*;
@@ -11,28 +12,29 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
-public class PostLike {
+@Table(uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"user_id","post_id"})
+})
+public class PostLike extends AuditingEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long like_Id;
-
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(name = "like_id")
+    private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    //단방향 : like -> post를 탐색하지 않기 때문
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    private LocalDateTime created_at;
 
-    public PostLike(long like_Id, User user, Post post) {
-        this.like_Id = like_Id;
+    public PostLike(User user, Post post) {
         this.user = user;
         this.post =  post;
-        this.created_at = LocalDateTime.now();
     }
 
 }

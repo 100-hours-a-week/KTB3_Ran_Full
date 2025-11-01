@@ -1,26 +1,38 @@
 package com.ran.community.user.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.ran.community.comment.entity.Comment;
+import com.ran.community.global.entity.AuditingEntity;
+import com.ran.community.post.entity.Post;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
-public class User {
+@NoArgsConstructor
+public class User extends AuditingEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long userId;
+    @Column(name = "name_id")
+    private long id;
+
+    @Column(length = 50, name = "email", nullable = false)
     private String email;
+
+    @Column(length = 10, name = "username", nullable = false)
     private String username;
+
+    @Column(length = 255, name = "password", nullable = false)
     private String password;
 
-    public User(long userId, String email, String username, String password) {
-        this.userId = userId;
-        this.email = email;
-        this.username = username;
-        this.password = password;
-    }
+    @OneToMany(mappedBy = "user")
+    private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "comment")
+    private List<Comment> comments = new ArrayList<>();
 
 }
