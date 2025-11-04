@@ -1,6 +1,8 @@
 package com.ran.community.post.entity;
 
 import com.ran.community.global.entity.AuditingEntity;
+import com.ran.community.like.entity.PostLike;
+import com.ran.community.post.dto.request.PostUpdatedFormDto;
 import com.ran.community.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -24,7 +26,7 @@ public class Post extends AuditingEntity {
     private String content;
 
     @Column(length = 255, name = "img_url", nullable = true)
-    private String img;
+    private String imgUrl;
 
     @Column(name = "comment_count", nullable = false)
     private int commentCount = 0;//초기값이 0이기 때문
@@ -39,10 +41,29 @@ public class Post extends AuditingEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Post(String title, String content, String img, User user) {
+
+    public Post(String title, String content, String imgUrl, User user) {
         this.title = title;
         this.content = content;
-        this.img = img;
+        this.imgUrl = imgUrl;
         this.user = user;
+    }
+
+    //보통 수정할땐 다같이 없데이트를 하니까 한꺼번에 올리는게 낫지 않나?
+    public void updatePost(PostUpdatedFormDto post) {
+        this.title = post.getTitle();
+        this.content = post.getContent();
+        this.imgUrl = post.getImgUrl();
+    }
+
+
+    //좋아요 증가
+    public void increaseLikeCount() {
+        this.likeCount++;
+    }
+
+    //좋아요 감소
+    public void decreaseLikeCount() {
+        this.likeCount--;
     }
 }

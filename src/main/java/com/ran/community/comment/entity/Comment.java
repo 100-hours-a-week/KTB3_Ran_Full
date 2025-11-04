@@ -1,5 +1,6 @@
 package com.ran.community.comment.entity;
 
+import com.ran.community.comment.dto.request.CommentUpdatedFormDto;
 import com.ran.community.global.entity.AuditingEntity;
 import com.ran.community.post.entity.Post;
 import com.ran.community.user.entity.User;
@@ -35,6 +36,11 @@ public class Comment extends AuditingEntity {
         this.content = content;
         this.user = user;
         this.post = post;
+    }
+
+    public void updateComment(CommentUpdatedFormDto dto){
+        this.content = dto.getContent();
+
     }
 
 }
