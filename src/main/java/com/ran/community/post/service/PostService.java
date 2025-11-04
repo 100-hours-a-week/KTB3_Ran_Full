@@ -1,5 +1,10 @@
 package com.ran.community.post.service;
 
+import com.ran.community.comment.entity.Comment;
+import com.ran.community.like.entity.PostLike;
+import com.ran.community.like.repository.LikeRepository;
+import com.ran.community.like.service.LikeService;
+import com.ran.community.post.dto.request.PostUpdatedFormDto;
 import com.ran.community.post.dto.response.PageDto;
 import com.ran.community.post.dto.request.PostCreateFormDto;
 import com.ran.community.post.dto.response.PageMeta;
@@ -7,7 +12,9 @@ import com.ran.community.post.dto.response.PostDataDto;
 import com.ran.community.post.entity.Post;
 import com.ran.community.post.repository.PostRepository;
 import com.ran.community.user.entity.User;
+import com.ran.community.user.repository.UserRepository;
 import com.ran.community.user.service.UserService;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,36 +26,55 @@ import java.util.Optional;
 
 @Service
 public class PostService {
+    private final UserRepository userRepository;
+    private final LikeService likeService;
     private PostRepository postRepository;
+    private LikeRepository likeRepository;
     private static final Logger logger = LoggerFactory.getLogger(PostService.class);
 
     @Autowired
-    public PostService(PostRepository postRepository) {
+    public PostService(PostRepository postRepository, UserRepository userRepository, LikeRepository likeRepository, LikeService likeService) {
         this.postRepository = postRepository;
+        this.userRepository = userRepository;
+        this.likeRepository = likeRepository;
+        this.likeService = likeService;
     }
+
 
     //식별자로 찾기
-    public Post getPost(Long postId) {
-        Post post = postRepository.getPost(postId).orElseThrow(()->new IllegalArgumentException("게시물을 찾을 수 없습니다."));
-        return post;
+    private Post findByPostId(Long id) {
+        return postRepository.findById(id).orElseThrow(()->new IllegalArgumentException("게시물을 찾을 수 없습니다."));
+    }
+
+    //식별자로 유저 찾기
+    private User findByUserId(long id){
+        return userRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("유저를 찾을 수 없습니다."));
     }
 
 
-    //생성하기
-    public PostDataDto postCreate(User user, PostCreateFormDto postCreateFormDto) {
-        Post post = postRepository.postCreate(user,postCreateFormDto);
-        return new PostDataDto(post);
+    //생성하기 Creat
+    @Transactional
+    public PostDataDto save(long userId, PostCreateFormDto postCreateFormDto) {
+        User user = userRepository.findById(userId).orElseThrow(()-> new IllegalArgumentException("유저를 찾을 수 없습니다."));;
+        Post post = new Post(postCreateFormDto.getTitle(),postCreateFormDto.getContent(),postCreateFormDto.getImgUrl(),user);
+        return new PostDataDto(postRepository.save(post));
     }
 
-    //특정 게시물 조회 -> 조회로 하기 때문에 빨리 탐색하기 위해 Map으로 조회하는 것이었음.
-    public PostDataDto postRead(Long postId) {
-        Post post = postRepository.getPost(postId).orElseThrow(()->new IllegalArgumentException("게시물을 찾을 수 없습니다."));
-        return new PostDataDto(post);
+    //특정 게시물 조회
+    public PostDataDto findByPost(Long postId) {
+        return new PostDataDto(findByPostId(postId));
+    }
+
+    @Transactional
+    protected void validationUser(long userId, Post post) {
+        if(post.getUser().getId()!=userId){
+            throw new IllegalArgumentException("댓글을 수정할 권한이 없습니다.");
+        }
     }
 
     //특정 게시물을 조회해서 data json으로 변형 //이게 무슨 코드지?
-//    public PostDataDto postReadData(Long postId) {
-//        Post post = postRead(postId);
+//    public PostDataDto postReadData(Long id) {
+//        Post post = postRead(id);
 //        return new PostDataDto(post.getPostId(),post.getPostTitle(),post.getPostContent(),post.getPostAuthor(),post.getPostDate(),post.getPostImageUrl());
 //    }
 
@@ -79,22 +105,58 @@ public class PostService {
         return pageOffset(page,limit,numOfContents,numOfPages,offsetNextList);
     }
 
+    //특정 게시물의 좋아요 갯수 count하여 저장
+    @Transactional
+    public void countLike(long postId){
+        Post post  = findByPostId(postId);
+        int countLike = likeRepository.countByPost_Id(postId);
+        post.updatePostLike(countLike);
+    }
+
+    //이거 나누는게 낫나? 아니면 이렇게 합쳐두는게 낫나?
+
+//    //좋아요 갯수 저장
+//    @Transactional
+//    public void saveLikeCount(long postId){
+//        Post post =  findByPostId(postId);
+//        post.updatePostLike(countLike(postId)+1);
+//    }
+
+
+    //좋아요 갯수 조회
+    @Transactional
+    public int getLikeCount(long postId) {
+        countLike(postId);//좋아요 갯수
+        return postRepository.findByLikeCount(postId); //좋아요 갯수 반환
+    }
+
     //전체 게시글 읽기
     public List<Post> totalPostList(){
-        return postRepository.totalPostList().orElseThrow(()->new IllegalArgumentException("게시물이 없습니다."));
+        List<Post> postList = postRepository.findAll();
+        if(postList.isEmpty()){
+            throw new IllegalArgumentException("게시물을 찾을 수 없습니다.");
+        }
+        return postList;
     }
 
     //게시물 수정
-    public PostDataDto updatePost(Long postId, PostCreateFormDto postCreateFormDto) {
-        Post post = postRepository.updatePost(getPost(postId),postCreateFormDto).orElseThrow(()->new IllegalArgumentException("게시물을 찾을 수 없습니다."));
-        logger.info(post.toString());
+    @Transactional
+    public PostDataDto updatePost(long postId, long userId, PostUpdatedFormDto postUpdatedFormDto) {
+        Post post = findByPostId(postId);
+        validationUser(userId,post);
+
+        post.updatePost(postUpdatedFormDto);
         return new PostDataDto(post);
     }
 
     //게시물 삭제
-    public PostDataDto deletePost(Long postId) {
-        Post post = postRepository.deletePost(postId).orElseThrow(()->new IllegalArgumentException("게시물을 찾을 수 없습니다."));
-        logger.info(post.toString());
+    //본인확인 먼저
+    @Transactional
+    public PostDataDto deletePost(long postId, long userId) {
+        Post post = findByPostId(postId);
+        validationUser(userId,post);
+
+        postRepository.deleteById(postId);
         return new PostDataDto(post);
     }
 }
