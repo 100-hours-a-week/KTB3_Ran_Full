@@ -1,11 +1,13 @@
 package com.ran.community.global;
 
 
+import lombok.Getter;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 //응답 래퍼클래스
+@Getter
 public class ApiResponse<T> {
     private String status;
     private int code;
