@@ -1,5 +1,6 @@
 package com.ran.community.post.entity;
 
+import com.ran.community.comment.entity.Comment;
 import com.ran.community.global.entity.AuditingEntity;
 import com.ran.community.like.entity.PostLike;
 import com.ran.community.post.dto.request.PostUpdatedFormDto;
@@ -7,6 +8,10 @@ import com.ran.community.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -40,6 +45,11 @@ public class Post extends AuditingEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @BatchSize(size = 50)
+    private List<Comment> comments = new ArrayList<>();
+
 
 
     public Post(String title, String content, String imgUrl, User user) {
