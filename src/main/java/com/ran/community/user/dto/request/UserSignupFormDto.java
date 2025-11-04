@@ -1,7 +1,12 @@
 package com.ran.community.user.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+
+@Getter
+@AllArgsConstructor
 public class UserSignupFormDto {
     @NotBlank(message = "이메일을 입력해주세요.")
     @Pattern(
@@ -23,32 +28,6 @@ public class UserSignupFormDto {
     @NotBlank(message = "비밀번호를 다시 입력해주세요.")
     private String confirmPassword;
 
-    public UserSignupFormDto(String email, String username, String password, String confirmPassword) {
-        this.email = email;
-        this.username = username;
-        this.password = password;
-        this.confirmPassword = confirmPassword;
-    }
-
-    //실제로 get밖에 사용하지 않음 .-UserResponse
-    public String getEmail(){
-        return email;
-    }
-
-
-    public String getUsername(){
-        return username;
-    }
-
-
-    public String getPassword(){
-        return password;
-    }
-
-
-    public String getConfirmPassword(){
-        return confirmPassword;
-    }
 
 
 }
