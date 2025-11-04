@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class PostCreateFormDto {
+public class PostUpdatedFormDto {
     @NotBlank(message = "제목을 입력해주세요.")
     @Size(max=24, message = "제목은 24자 이하로 작성 가능합니다.")
     private String title;
@@ -15,7 +15,7 @@ public class PostCreateFormDto {
     @NotBlank(message = "내용을 입력해주세요.")
     private String content;
 
-    //선택
+    //nullable = true
     public String imgUrl;
 
 }
