@@ -1,13 +1,19 @@
 package com.ran.community.comment.service;
 
+import com.ran.community.comment.dto.request.CommentUpdatedFormDto;
 import com.ran.community.comment.dto.response.CommentDataDTO;
 import com.ran.community.comment.entity.Comment;
 import com.ran.community.comment.dto.request.CommentInputDto;
 import com.ran.community.comment.repository.CommentRepository;
+import com.ran.community.post.entity.Post;
+import com.ran.community.post.repository.PostRepository;
+import com.ran.community.user.entity.User;
+import com.ran.community.user.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,64 +21,84 @@ import java.util.stream.Collectors;
 @Service
 public class CommentService {
     private final CommentRepository commentRepository;
+    private PostRepository postRepository;
+    private UserRepository userRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(CommentService.class);
 
     @Autowired
-    public CommentService(CommentRepository commentRepository) {
+    public CommentService(CommentRepository commentRepository, PostRepository postRepository, UserRepository userRepository) {
+
         this.commentRepository = commentRepository;
+        this.postRepository = postRepository;
+        this.userRepository = userRepository;
+    }
+
+
+    //식별자로 찾기
+    private Post findByPostId(Long id) {
+        return postRepository.findById(id).orElseThrow(()->new IllegalArgumentException("게시물을 찾을 수 없습니다."));
+    }
+
+    //식별자로 유저 찾기
+    private User findByUserId(long id){
+        return userRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+    }
+
+    //식별자로 댓글 찾기
+    private Comment findByCommentId(long id){
+        return commentRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("댓글이 없습니다."));
     }
 
     //private
     //본인이 작성한 댓글만 상태를 변경할 수 있음.(본인확인)
     //해당 클래스 안에서만 유의미한 메서드이기 때문에 다른 클래스에서 검증로직을 무분별하게 사용할 수 있음.
+    @Transactional
     private void validationUser(long userId, long postId, Comment comment){
-        if(comment.getAuthorId()!=userId || comment.getPostId()!=postId){
+        if(comment.getUser().getId()!=userId || comment.getPost().getId()!=postId){
             throw new IllegalArgumentException("댓글을 수정할 권한이 없습니다.");
         }
     }
 
-    //식별자로 찾기
-    public Comment getComment(long commentId){
-        return commentRepository.getComment(commentId).orElseThrow(()->new IllegalArgumentException("댓글이 없습니다."));
-    }
 
-    //특정 게시글(postId)의 댓글 가져오기
-    public List<CommentDataDTO> commentListByPostId(Long postId) {
-        List<Comment> comments = commentRepository.commentListByPostId(postId).orElseThrow(()->new IllegalArgumentException("댓글이 없습니다."));
-
-        List<CommentDataDTO> cmtResponseDTO = comments.stream().map(comment -> new CommentDataDTO(comment.getCommentId(),comment.getContent(),comment.getAuthorId(),comment.getPostTime())).collect(Collectors.toList());
-        logger.info(cmtResponseDTO.toString());
-        return cmtResponseDTO;
+    //특정 게시글(id)의 댓글 조회 //find : 조회 //save : 생성 // update : 수정 // delete : 삭제
+    @Transactional
+    public List<CommentDataDTO> commentListByPostId(long postId) {
+        List<Comment> comments = commentRepository.findByPost_Id(postId);
+        return comments.stream().map(comment -> new CommentDataDTO(comment.getCommentId(),comment.getContent(),comment.getUser().getId())).collect(Collectors.toList());
     }
 
     //댓글 생성
+    @Transactional
     public CommentDataDTO commentCreate(long userId, long postId, CommentInputDto commentInputDto) {
-        Comment cmt = commentRepository.commentCreate(userId, postId, commentInputDto);
-        logger.info(cmt.toString());
+        User user = findByUserId(userId);
+        Post post = findByPostId(postId);
+
+        Comment cmt = commentRepository.save(new Comment(commentInputDto.getContent(),user,post));
         return new CommentDataDTO(cmt);
     }
 
     //댓글 수정
+    @Transactional
     public CommentDataDTO commentUpdate(long userId, long postId, long commentId, CommentInputDto commentInputDto) {
         //내껏만 가능
-        Comment comment = getComment(commentId);
+        Comment comment = findByCommentId(commentId);
         validationUser(userId,postId,comment);//수정권한 확인
 
-        Comment cmt = commentRepository.commentUpdate(comment, commentInputDto).orElseThrow(()->new IllegalArgumentException("댓글이 존재하지 않습니다."));
-        logger.info(cmt.toString());
-        return new CommentDataDTO(cmt);
+        CommentUpdatedFormDto commentUpdatedFormDto = new CommentUpdatedFormDto(commentInputDto.getContent());
+        comment.updateComment(commentUpdatedFormDto);
+        return new CommentDataDTO(comment);
 
     }
 
     //댓글 삭제
+    @Transactional
     public CommentDataDTO commentDelete(long userId, long postId, long commentId) {
-        Comment comment = getComment(commentId);
-        validationUser(userId,postId,comment); //수정권한 확인
+        Comment comment = findByCommentId(commentId);
+        validationUser(userId,postId,comment);//수정권한 확인
 
-        Comment cmt = commentRepository.commentDelete(comment).orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
-        logger.info(cmt.toString());
-        return new CommentDataDTO(cmt);
+        commentRepository.deleteById(commentId);
+        return new CommentDataDTO(comment);
     }
 
 

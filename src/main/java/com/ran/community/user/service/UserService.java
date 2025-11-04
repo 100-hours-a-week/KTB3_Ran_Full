@@ -1,10 +1,12 @@
 package com.ran.community.user.service;
 
+import com.ran.community.user.dto.request.UserUpdatedDto;
 import com.ran.community.user.entity.User;
 import com.ran.community.user.dto.request.UserLoginDto;
 import com.ran.community.user.dto.request.UserSignupFormDto;
 import com.ran.community.user.dto.response.UserDataResponseDTO;
 import com.ran.community.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +23,7 @@ public class UserService {
     @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;//UserRepository를 인터페이스로 상속받고 있는 구현체들 중 필요한 클래스를 자동으로 생성자에 주입
-        //때문에, 인터페이스로 분리해야만 spring의 DI를 활용할수있는 것.
-        //기존 코드에서는 인터페이스가 아닌 구현체로 받고 있었기 때문에 autowired가 있으나 마나였던 것임.
-        //wow
+
     }
 
     //이메일과 닉네임을 비교
@@ -31,14 +31,20 @@ public class UserService {
         return user.getPassword().equals(userLoginDto.getPassword());
     }
 
-    //식별자로 유저 찾기 //해당 메서드는 외부에서 사용할 수도 있음.
-    public User getUser(long userId){
-        return userRepository.getUser(userId).orElseThrow(()-> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+    //식별자로 유저 찾기
+    private User findById(long id){
+        return userRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("유저를 찾을 수 없습니다."));
     }
+
+//    //유저 객체 반환
+//    public User findByUser(long id){
+//        return findById(id);
+//    }
 
     //유저 생성
     private User createUser(UserSignupFormDto userSignupFormDto){
-        return userRepository.addUser(userSignupFormDto);
+        User user = new User(userSignupFormDto.getEmail(),userSignupFormDto.getUsername(),userSignupFormDto.getPassword());
+        return userRepository.save(user);
     }
 
     //닉네임 중복
@@ -55,7 +61,10 @@ public class UserService {
         });
     }
 
+    //비밀번호과 재확인 일치하는지 확인하는 로직
+
     //유저 등록 //DTO -> Entity로 변환
+    @Transactional
     public UserDataResponseDTO registerUser(UserSignupFormDto userSignupFormDto){
         duplicateUsername(userSignupFormDto);//중복 닉네임
         duplicateEmail(userSignupFormDto);//중복 이메일
@@ -87,30 +96,31 @@ public class UserService {
     }
 
     //로그인
-    //userId 반환
+    //id 반환
     public UserDataResponseDTO login(UserLoginDto userLoginDto) {
         User user = userExists(userLoginDto);
-        //로그인 성공 시 유저 정보 반환
-
-        return new UserDataResponseDTO(user.getUserId(), user.getUsername(), user.getEmail());
+        return new UserDataResponseDTO(user);
     }
 
     //유저 정보 조회
-    public UserDataResponseDTO getUserData(long userId){
-        User user = getUser(userId);
-        return new UserDataResponseDTO(user.getUserId(), user.getUsername(), user.getPassword());
+    public UserDataResponseDTO getUserData(long id){
+        User user = findById(id);
+        return new UserDataResponseDTO(user);
     }
 
     //유저 정보 수정
-    public UserDataResponseDTO updateUser(Long userId, UserSignupFormDto userSignupFormDto) {
-        //유저 찾기
-        User user = userRepository.updateUser(getUser(userId), userSignupFormDto);
+    @Transactional
+    public UserDataResponseDTO updateUser(Long id, UserUpdatedDto userUpdatedDto) {
+        User user = findById(id);
+        user.updatedUser(userUpdatedDto);
         return new UserDataResponseDTO(user);
     }
 
     //유저 정보 삭제
-    public UserDataResponseDTO deletedUser(Long userId) {
-        User user = userRepository.deleteUser(userId).orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+    @Transactional
+    public UserDataResponseDTO deletedUser(Long id) {
+        User user = findById(id);
+        userRepository.deleteById(id);
         return new UserDataResponseDTO(user);
     }
 

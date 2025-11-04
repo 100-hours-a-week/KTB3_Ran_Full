@@ -9,6 +9,7 @@ import com.ran.community.post.dto.response.PageDto;
 import com.ran.community.post.dto.request.PostCreateFormDto;
 import com.ran.community.post.dto.response.PageMeta;
 import com.ran.community.post.dto.response.PostDataDto;
+import com.ran.community.post.dto.response.PostLikeCountDto;
 import com.ran.community.post.entity.Post;
 import com.ran.community.post.repository.PostRepository;
 import com.ran.community.user.entity.User;
@@ -27,17 +28,15 @@ import java.util.Optional;
 @Service
 public class PostService {
     private final UserRepository userRepository;
-    private final LikeService likeService;
     private PostRepository postRepository;
     private LikeRepository likeRepository;
     private static final Logger logger = LoggerFactory.getLogger(PostService.class);
 
     @Autowired
-    public PostService(PostRepository postRepository, UserRepository userRepository, LikeRepository likeRepository, LikeService likeService) {
+    public PostService(PostRepository postRepository, UserRepository userRepository, LikeRepository likeRepository) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.likeRepository = likeRepository;
-        this.likeService = likeService;
     }
 
 
@@ -105,30 +104,42 @@ public class PostService {
         return pageOffset(page,limit,numOfContents,numOfPages,offsetNextList);
     }
 
-    //특정 게시물의 좋아요 갯수 count하여 저장
-    @Transactional
-    public void countLike(long postId){
-        Post post  = findByPostId(postId);
-        int countLike = likeRepository.countByPost_Id(postId);
-        post.updatePostLike(countLike);
-    }
 
-    //이거 나누는게 낫나? 아니면 이렇게 합쳐두는게 낫나?
-
-//    //좋아요 갯수 저장
+//    //특정 게시물의 좋아요 갯수 count하여 저장
 //    @Transactional
-//    public void saveLikeCount(long postId){
-//        Post post =  findByPostId(postId);
-//        post.updatePostLike(countLike(postId)+1);
+//    private void countLike(long postId){
+//        Post post  = findByPostId(postId);
+//        int countLike = likeRepository.countByPost_Id(postId);
+//        post.updatePostLike(countLike);//엔티티 안에 넣음 -> DB 안에 넣음
 //    }
+
 
 
     //좋아요 갯수 조회
     @Transactional
-    public int getLikeCount(long postId) {
-        countLike(postId);//좋아요 갯수
-        return postRepository.findByLikeCount(postId); //좋아요 갯수 반환
+    public PostLikeCountDto getLikeCount(long postId) {
+        int countOfLike = postRepository.findLikeCountByPostId(postId);
+        //좋아요 DTO 꺼냄
+        return new PostLikeCountDto(postId,countOfLike); //좋아요 갯수 반환
     }
+
+//    /// ///부하테스트
+//    //좋아요 갯수 조회
+//    @Transactional
+//    public PostLikeCountDto findByIdLike(long postId) {
+//        int countOfLike = postRepository.findById(postId).get().getLikeCount();//DB에서 좋아요 갯수 꺼냄
+//        //좋아요 DTO 꺼냄
+//        return new PostLikeCountDto(postId,countOfLike); //좋아요 갯수 반환
+//    }
+//
+//    @Transactional
+//    public PostLikeCountDto LikeCount(long postId) {
+//        int countOfLike = postRepository.findLikeCountByPostId(postId);
+//        //좋아요 DTO 꺼냄
+//        return new PostLikeCountDto(postId,countOfLike); //좋아요 갯수 반환
+//    }
+
+    /// ///
 
     //전체 게시글 읽기
     public List<Post> totalPostList(){
