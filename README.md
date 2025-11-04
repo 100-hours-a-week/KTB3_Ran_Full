@@ -71,10 +71,10 @@ interface UserRepository
 public interface UserRepository {
     User addUser(UserSignupFormDto userSignupFormDto);
     User updateUser(User user, UserSignupFormDto userSignupFormDto);
-    Optional<User> getUser(long userId);
+    Optional<User> getUser(long id);
     Optional<User> findByEmail(String email);
     Optional<User> findByUsername(String username);
-    Optional<User> deleteUser(long userId);
+    Optional<User> deleteUser(long id);
 }
 ```
 
