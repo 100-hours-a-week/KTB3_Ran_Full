@@ -9,8 +9,8 @@ spring:
     hibernate:
       ddl-auto: create
     properties:
-      hibernate:
-        format_sql: true
+      hibernate.default_batch_fetch_size: 50
+      hibernate.format_sql: true
 
 logging:
   level:
