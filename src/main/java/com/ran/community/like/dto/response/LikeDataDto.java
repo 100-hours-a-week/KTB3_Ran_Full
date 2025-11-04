@@ -1,17 +1,18 @@
 package com.ran.community.like.dto.response;
 
-import com.ran.community.like.entity.Like;
+import com.ran.community.like.entity.PostLike;
+import lombok.Getter;
 
+@Getter
 public class LikeDataDto {
     private long likeId;
     private long userId;
     private long postId;
 
-    public LikeDataDto(Like like) {
-        this.likeId = like.getLikeId();
-        this.userId = like.getUserId();
-        this.postId = like.getPostId();
+    public LikeDataDto(PostLike like) {
+        this.likeId = like.getId();
+        this.userId = like.getUser().getId();
+        this.postId = like.getPost().getId();
 
     }
-
 }

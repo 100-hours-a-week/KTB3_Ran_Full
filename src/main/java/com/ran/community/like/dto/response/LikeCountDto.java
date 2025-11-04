@@ -1,17 +1,15 @@
 package com.ran.community.like.dto.response;
 
+import lombok.Getter;
+
+//조회할 때
+@Getter
 public class LikeCountDto {
     private int count;
-    private long postId;
+    private long id;
 
-    public LikeCountDto(long postId,int count) {
+    public LikeCountDto(int count, long id) {
         this.count = count;
-        this.postId = postId;
-    }
-    public int getCount() {
-        return count;
-    }
-    public long getPostId() {
-        return postId;
+        this.id = id;
     }
 }
