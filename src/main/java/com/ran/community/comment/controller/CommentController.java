@@ -25,8 +25,8 @@ public class CommentController {
     //댓글 생성
     @PostMapping()
     public ResponseEntity<ApiResponse<CommentDataDTO>> commentCreate(HttpSession session, @PathVariable Long postId, @RequestBody CommentInputDto commentInputDto) {
-        long userId = (long) session.getAttribute("userId");
-        CommentDataDTO commentDataDTO = commentService.commentCreate(userId,postId,commentInputDto);
+        long userId = (long) session.getAttribute("id");
+        CommentDataDTO commentDataDTO = commentService.commentCreate(postId,userId,commentInputDto);
         return ApiResponse.created(commentDataDTO,"comment_created_success");
     }
 
@@ -40,7 +40,7 @@ public class CommentController {
     //댓글 수정
     @PatchMapping("/{commentId}")
     public ResponseEntity<?> commentUpdate(HttpSession session, @PathVariable Long postId,@PathVariable Long commentId, @RequestBody CommentInputDto commentInputDto) {
-        long userId = (long) session.getAttribute("userId");
+        long userId = (long) session.getAttribute("id");
         CommentDataDTO commentDataDTO = commentService.commentUpdate(userId,postId,commentId,commentInputDto);
         return ApiResponse.success(commentDataDTO,"comment_updated_success");
     }
@@ -48,7 +48,7 @@ public class CommentController {
     //댓글 삭제
     @DeleteMapping("/{commentId}")
     public ResponseEntity<?> commentDelete(HttpSession session, @PathVariable Long postId,@PathVariable Long commentId) {
-        long userId = (long) session.getAttribute("userId");
+        long userId = (long) session.getAttribute("id");
         CommentDataDTO commentDataDTO = commentService.commentDelete(userId,postId,commentId);
         return ApiResponse.success(commentDataDTO,"comment_deleted_success");
     }
