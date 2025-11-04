@@ -1,21 +1,18 @@
 package com.ran.community.like.repository;
 
-import com.ran.community.like.entity.Like;
+import com.ran.community.like.entity.PostLike;
+import com.ran.community.post.entity.Post;
+import com.ran.community.user.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface LikeRepository {
+@Repository
+public interface LikeRepository extends JpaRepository<PostLike, Long> {
+    void deleteByPostAndUser(Post post, User user);
+    int countByPost_Id(long postId);
+    boolean existsByUserAndPost(User user,Post post);
 
-    //likeId로 좋아요 객체 가져오기
-    Optional<Like> getLike(long likeId);
-
-    //특정 게시물의 좋아요 생성
-    Like addLike(long userId, long postId);
-
-    //특정 게시물의 좋아요 리스트 가져오기
-    Optional<List<Like>> getLikeListByPostId(long postId);
-
-    //특정 게시물의 좋아요 삭제하기
-    Optional<Like> deleteLike(long userId, long postId);
 }
