@@ -1,6 +1,8 @@
 package com.ran.community.post.controller;
 
+import com.ran.community.comment.dto.response.CommentCountDto;
 import com.ran.community.global.ApiResponse;
+import com.ran.community.like.dto.response.LikeCountDto;
 import com.ran.community.like.dto.response.LikeStateDto;
 import com.ran.community.like.service.LikeService;
 import com.ran.community.post.dto.request.PostUpdatedFormDto;
@@ -107,19 +109,35 @@ public class PostController {
 
     }
 
+    //count 도메인 분리 해야하나?
+
     //특정 게시물의 좋아요 갯수, 댓글 갯수, 조회수 조회
-    @GetMapping("/{postId}/count")
-    public ResponseEntity<ApiResponse<PostCountDto>> getLikes(@PathVariable long postId) {
-        PostCountDto CountDto = postService.getLikeCount(postId);
-        return ApiResponse.success(CountDto,"get_like");
+    @GetMapping("/{postId}/counts")
+    public ResponseEntity<ApiResponse<PostCountDto>> getCount(@PathVariable long postId) {
+        PostCountDto Dto = postService.getCount(postId);
+        return ApiResponse.success(Dto,"get_count");
     }
 
-//    //특정 게시물의 좋아요 갯수 조회
-//    @GetMapping("/{postId}/count")
-//    public ResponseEntity<ApiResponse<PostLikeCountDto>> getLikes(@PathVariable long postId) {
-//        PostCountDto likeCountDto = postService.getLikeCount(postId);
-//        return ApiResponse.success(,"get_like");
-//    }
+    //특정 게시물의 좋아요 갯수 조회
+    @GetMapping("/{postId}/counts/likes")
+    public ResponseEntity<ApiResponse<LikeCountDto>> getLikeCount(@PathVariable long postId) {
+        LikeCountDto Dto = postService.getLikeCount(postId);
+        return ApiResponse.success(Dto,"get_likeCount");
+    }
+
+    //특정 게시물의 댓글 갯수 조회
+    @GetMapping("/{postId}/counts/comments")
+    public ResponseEntity<ApiResponse<CommentCountDto>> getCommentCount(@PathVariable long postId) {
+        CommentCountDto Dto = postService.getCommentCount(postId);
+        return ApiResponse.success(Dto,"get_commentCount");
+    }
+
+    //특정 게시물의 조회수 갯수 조회
+    @GetMapping("/{postId}/counts/views")
+    public ResponseEntity<ApiResponse<ViewCountDto>> getViewCount(@PathVariable long postId) {
+        ViewCountDto Dto = postService.getViewCount(postId);
+        return ApiResponse.success(Dto,"get_viewCount");
+    }
 //    /// ///부하테스트
 //    //1
 //    @GetMapping("/{postId}/findByIdTest")
