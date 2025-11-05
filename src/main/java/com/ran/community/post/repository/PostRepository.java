@@ -12,22 +12,34 @@ import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
+    //좋아요 갯수
     @Query("SELECT p.likeCount FROM Post p WHERE p.id = :postId")
     int findLikeCountByPostId(@Param("postId") long postId);
 
+    //댓글 갯수
+    @Query("SELECT p.commentCount FROM Post p WHERE p.id = :postId")
+    int findCommentCountByPostId(@Param("postId") long postId);
 
-//    Post findById(Post post);
-    //postId가 여러개일수도있는거아님?
-    //얘를 postId로 해야할지 Post로 받아야할 지 모르겠네
-//    //특정 게시글 가져오기
-//    Optional<Post> getPost(long id);
-//
-//    //전체 리스트 생성
-//    Optional<List<Post>> totalPostList();
-//
-//    //게시물 수정
-//    Optional<Post> updatePost(Post post, PostCreateFormDto postCreateFormDto);
-//
-//    //게시물 삭제
-//    Optional<Post> deletePost(long id);
+    //조회수 갯수
+    @Query("SELECT p.viewCount FROM Post p WHERE p.id = :postId")
+    int findViewCountByPostId(@Param("postId") long postId);
+
+
+    //postId에 대해 댓글 조회하기
+    //post 테이블 데이터에서 댓글을 가지고 올건데, postId값인 id에서 p(전체)를 가져올것임.
+    //fetchjoin
+    @Query("SELECT p FROM Post p JOIN FETCH p.comments WHERE p.id = :postId")
+    Optional<Post> findByPostIdWithComments(@Param("postId") long postId);
+
+    //post 작성자 가져오기
+    @Query("SELECT p FROM Post p JOIN FETCH p.user WHERE p.id = :postId")
+    Optional<Post> findByPostIdWithAuthor(@Param("postId") long postId);
+
+    //post + user + comment
+    @Query("SELECT p FROM Post p JOIN FETCH p.user LEFT JOIN FETCH p.comments WHERE p.id = :postId")
+    Optional<Post> findByPostIdWithCommentsAuthor(@Param("postId") long postId);
+
+    //전체 post + user + comment
+    @Query("SELECT p FROM Post p JOIN FETCH p.user")
+    Optional<List<Post>> findWithCommentsAuthor();
 }
