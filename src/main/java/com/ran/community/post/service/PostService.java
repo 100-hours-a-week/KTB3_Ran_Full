@@ -5,11 +5,8 @@ import com.ran.community.like.entity.PostLike;
 import com.ran.community.like.repository.LikeRepository;
 import com.ran.community.like.service.LikeService;
 import com.ran.community.post.dto.request.PostUpdatedFormDto;
-import com.ran.community.post.dto.response.PageDto;
+import com.ran.community.post.dto.response.*;
 import com.ran.community.post.dto.request.PostCreateFormDto;
-import com.ran.community.post.dto.response.PageMeta;
-import com.ran.community.post.dto.response.PostDataDto;
-import com.ran.community.post.dto.response.PostLikeCountDto;
 import com.ran.community.post.entity.Post;
 import com.ran.community.post.repository.PostRepository;
 import com.ran.community.user.entity.User;
@@ -24,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -59,10 +57,40 @@ public class PostService {
         return new PostDataDto(postRepository.save(post));
     }
 
-    //특정 게시물 조회
-    public PostDataDto findByPost(Long postId) {
-        return new PostDataDto(findByPostId(postId));
+    //optional 예외처리
+    private Post findByPostIdWithComments(long postId) {
+        return postRepository.findByPostIdWithComments(postId).orElseThrow(()->new IllegalArgumentException("내용이 없습니다."));
     }
+    
+    //게시물 가져올 때 getUser 하기 
+    private Post findByPostIdWithAuthor(long postId) {
+        return postRepository.findByPostIdWithAuthor(postId).orElseThrow(()->new IllegalArgumentException("게시글이 없습니다."));
+    }
+
+    //특정 게시물 상세 조회 + user + 댓글
+    private Post findByPostIdWithCommentsAuthor(long postId) {
+        return postRepository.findByPostIdWithCommentsAuthor(postId).orElseThrow(()->new IllegalArgumentException("게시글이 없습니다."));
+    }
+
+    //전체 게시물 조회
+    private List<Post> findPostAll(){
+        return postRepository.findWithCommentsAuthor().orElseThrow(()->new IllegalArgumentException("게시글이 없습니다."));
+    }
+
+    //특정 게시물 상세 조회 + 댓글 조회까지 //fetch join 개선
+    public PostDataDto findByPost(Long postId) {
+        Post post = findByPostIdWithComments(postId);
+        post.increaseViewCount(); //조회수 증가
+
+        Post postIdWithCommentsAuthor = findByPostIdWithCommentsAuthor(postId);
+        return new PostDataDto(postIdWithCommentsAuthor);
+    }
+
+//    /// 부하테스트 오리진 : fetch join 없이
+//    public PostDataDto findByPostOrigin(Long postId) {
+//        Post postIdWithCommentsAuthor = postRepository.findById(postId).orElseThrow(()->new IllegalArgumentException("게시글이 없습니다."));
+//        return new PostDataDto(postIdWithCommentsAuthor);
+//    }
 
     @Transactional
     protected void validationUser(long userId, Post post) {
@@ -71,57 +99,30 @@ public class PostService {
         }
     }
 
-    //특정 게시물을 조회해서 data json으로 변형 //이게 무슨 코드지?
-//    public PostDataDto postReadData(Long id) {
-//        Post post = postRead(id);
-//        return new PostDataDto(post.getPostId(),post.getPostTitle(),post.getPostContent(),post.getPostAuthor(),post.getPostDate(),post.getPostImageUrl());
-//    }
-
-    //페이지 offset 데이터
-    public PageDto pageOffset(int page, int limit, int numOfContents, int numOfPages, List<Post> offsetNextList){
-        PageMeta pageMeta = new PageMeta(numOfContents,limit,numOfPages,page);
-        PageDto pageData = new PageDto(pageMeta,offsetNextList);
-        logger.info(pageData.toString());
-        return pageData;
-    }
-
-
-    //page : 현재 페이지 번호
-    public PageDto postsRead(int page, int limit){
-        List<Post> list = totalPostList();
-        int numOfContents = totalPostList().size(); //전체 컨텐츠 수
-        int numOfPages = (int)Math.ceil((double)numOfContents/limit); //전체 필요한 페이지 수
-        int offset = (page-1)*limit; //앞에 있는 컨텐츠 수
-        //offset 이후 limit 만큼 반환
-        List<Post> offsetNextList = new ArrayList<>();
-
-        //배열의 넘버가 offset+1부터
-        //범위 초과 방지로 Math.min 사용
-        for(int idx = offset;idx<Math.min(offset+limit,numOfContents);idx++){
-            offsetNextList.add(list.get(idx));
-        }
-
-        return pageOffset(page,limit,numOfContents,numOfPages,offsetNextList);
-    }
-
-
-//    //특정 게시물의 좋아요 갯수 count하여 저장
+//    //전체 게시물 조회 fetch join 없이
 //    @Transactional
-//    private void countLike(long postId){
-//        Post post  = findByPostId(postId);
-//        int countLike = likeRepository.countByPost_Id(postId);
-//        post.updatePostLike(countLike);//엔티티 안에 넣음 -> DB 안에 넣음
+//    public List<PostDto> findAllPostsTest() {
+//        List<Post> postList= postRepository.findAll();
+//        return postList.stream().map(post -> new PostDto(post)).collect(Collectors.toList());
 //    }
 
-
-
-    //좋아요 갯수 조회
-    @Transactional
-    public PostLikeCountDto getLikeCount(long postId) {
-        int countOfLike = postRepository.findLikeCountByPostId(postId);
-        //좋아요 DTO 꺼냄
-        return new PostLikeCountDto(postId,countOfLike); //좋아요 갯수 반환
+    public List<PostDto> findAllPosts() {
+        List<Post> postList = findPostAll();
+        return postList.stream().map(post -> new PostDto(post)).collect(Collectors.toList());
     }
+
+
+
+    //좋아요, 조회, 댓글 갯수 조회
+    @Transactional
+    public PostCountDto getLikeCount(long postId) {
+        int likeCount = postRepository.findLikeCountByPostId(postId);
+        int commentCount = postRepository.findCommentCountByPostId(postId);
+        int viewCount = postRepository.findViewCountByPostId(postId);
+        //좋아요 DTO 꺼냄
+        return new PostCountDto(commentCount,likeCount,viewCount); //좋아요 갯수 반환
+    }
+
 
 //    /// ///부하테스트
 //    //좋아요 갯수 조회
