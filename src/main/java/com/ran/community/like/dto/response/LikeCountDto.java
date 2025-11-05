@@ -5,9 +5,9 @@ import lombok.Getter;
 //조회할 때
 @Getter
 public class LikeCountDto {
-    private int count;
+    private int likeCount;
 
-    public LikeCountDto(int count, long id) {
-        this.count = count;
+    public LikeCountDto(int count) {
+        this.likeCount = count;
     }
 }
