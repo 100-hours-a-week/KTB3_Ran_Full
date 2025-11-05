@@ -1,7 +1,7 @@
 package com.ran.community.comment.service;
 
 import com.ran.community.comment.dto.request.CommentUpdatedFormDto;
-import com.ran.community.comment.dto.response.CommentDataDTO;
+import com.ran.community.comment.dto.response.CommentDataDto;
 import com.ran.community.comment.entity.Comment;
 import com.ran.community.comment.dto.request.CommentInputDto;
 import com.ran.community.comment.repository.CommentRepository;
@@ -53,7 +53,6 @@ public class CommentService {
     //private
     //본인이 작성한 댓글만 상태를 변경할 수 있음.(본인확인)
     //해당 클래스 안에서만 유의미한 메서드이기 때문에 다른 클래스에서 검증로직을 무분별하게 사용할 수 있음.
-    @Transactional
     private void validationUser(long userId, long postId, Comment comment){
         if(comment.getUser().getId()!=userId || comment.getPost().getId()!=postId){
             throw new IllegalArgumentException("댓글을 수정할 권한이 없습니다.");
@@ -68,38 +67,38 @@ public class CommentService {
 
     //특정 게시글(id)의 댓글 전체 조회 fetch join
     @Transactional
-    public List<CommentDataDTO> commentListByPostId(long postId) {
+    public List<CommentDataDto> commentListByPostId(long postId) {
         List<Comment> comments = findByPost_Id(postId);
-        return comments.stream().map(comment -> new CommentDataDTO(comment.getCommentId(),comment.getContent(),comment.getUser().getId())).collect(Collectors.toList());
+        return comments.stream().map(comment -> new CommentDataDto(comment.getCommentId(),comment.getContent(),comment.getUser().getId())).collect(Collectors.toList());
     }
 
     //댓글 생성
     @Transactional
-    public CommentDataDTO commentCreate(long userId, long postId, CommentInputDto commentInputDto) {
+    public CommentDataDto commentCreate(long userId, long postId, CommentInputDto commentInputDto) {
         User user = findByUserId(userId);
         Post post = findByPostId(postId);
         post.increaseCommentCount();//댓글 갯수 증가
 
         Comment cmt = commentRepository.save(new Comment(commentInputDto.getContent(),user,post));
-        return new CommentDataDTO(cmt);
+        return new CommentDataDto(cmt);
     }
 
     //댓글 수정
     @Transactional
-    public CommentDataDTO commentUpdate(long userId, long postId, long commentId, CommentInputDto commentInputDto) {
+    public CommentDataDto commentUpdate(long userId, long postId, long commentId, CommentInputDto commentInputDto) {
         //내껏만 가능
         Comment comment = findByCommentId(commentId);
         validationUser(userId,postId,comment);//수정권한 확인
 
         CommentUpdatedFormDto commentUpdatedFormDto = new CommentUpdatedFormDto(commentInputDto.getContent());
         comment.updateComment(commentUpdatedFormDto);
-        return new CommentDataDTO(comment);
+        return new CommentDataDto(comment);
 
     }
 
     //댓글 삭제
     @Transactional
-    public CommentDataDTO commentDelete(long userId, long postId, long commentId) {
+    public CommentDataDto commentDelete(long userId, long postId, long commentId) {
         Comment comment = findByCommentId(commentId);
 
         validationUser(userId,postId,comment);//수정권한 확인
@@ -108,7 +107,7 @@ public class CommentService {
         post.decreaseCommentCount();//댓글 갯수 감소
 
         commentRepository.deleteById(commentId);
-        return new CommentDataDTO(comment);
+        return new CommentDataDto(comment);
     }
 
 

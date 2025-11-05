@@ -76,6 +76,7 @@ public class UserService {
     }
 
     //비밀번호 재 확인
+
     private void passwordConfirm(UserSignupFormDto userSignupFormDto){
         if(!userSignupFormDto.getPassword().equals(userSignupFormDto.getConfirmPassword())){
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
@@ -97,12 +98,14 @@ public class UserService {
 
     //로그인
     //id 반환
+    @Transactional
     public UserDataResponseDTO login(UserLoginDto userLoginDto) {
         User user = userExists(userLoginDto);
         return new UserDataResponseDTO(user);
     }
 
     //유저 정보 조회
+    @Transactional
     public UserDataResponseDTO getUserData(long id){
         User user = findById(id);
         return new UserDataResponseDTO(user);

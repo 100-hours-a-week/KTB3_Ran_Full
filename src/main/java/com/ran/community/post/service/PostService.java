@@ -1,5 +1,8 @@
 package com.ran.community.post.service;
 
+import com.ran.community.comment.dto.response.CommentCountDto;
+import com.ran.community.comment.entity.Comment;
+import com.ran.community.like.dto.response.LikeCountDto;
 import com.ran.community.like.repository.LikeRepository;
 import com.ran.community.post.dto.request.PostUpdatedFormDto;
 import com.ran.community.post.dto.response.*;
@@ -72,6 +75,7 @@ public class PostService {
     }
 
     //특정 게시물 상세 조회 + 댓글 조회까지 //fetch join 개선
+    @Transactional
     public PostDataDto findByPost(Long postId) {
         Post post = findByPostIdWithComments(postId);
         post.increaseViewCount(); //조회수 증가
@@ -100,6 +104,7 @@ public class PostService {
 //        return postList.stream().map(post -> new PostDto(post)).collect(Collectors.toList());
 //    }
 
+    @Transactional
     public List<PostGetDto> findAllPosts() {
         List<Post> postList = findPostAll();
         return postList.stream().map(post -> new PostGetDto(post)).collect(Collectors.toList());
@@ -108,8 +113,26 @@ public class PostService {
 
     //좋아요, 조회, 댓글 갯수 조회
     @Transactional
-    public PostCountDto getLikeCount(long postId) {
+    public PostCountDto getCount(long postId) {
         return postRepository.findCountByPostId(postId);
+    }
+
+    //좋아요 갯수 조회
+    @Transactional
+    public LikeCountDto getLikeCount(long postId){
+        return new LikeCountDto(postRepository.findLikeCountByPostId(postId));
+    }
+
+    //댓글 갯수 조회
+    @Transactional
+    public CommentCountDto getCommentCount(long postId){
+        return new CommentCountDto(postRepository.findCommentCountByPostId(postId));
+    }
+
+    //조회수 갯수 조회
+    @Transactional
+    public ViewCountDto getViewCount(long postId){
+        return new ViewCountDto(postRepository.findViewCountByPostId(postId));
     }
 
 
@@ -131,14 +154,6 @@ public class PostService {
 
     /// ///
 
-    //전체 게시글 읽기
-    public List<Post> totalPostList(){
-        List<Post> postList = postRepository.findAll();
-        if(postList.isEmpty()){
-            throw new IllegalArgumentException("게시물을 찾을 수 없습니다.");
-        }
-        return postList;
-    }
 
     //게시물 수정
     @Transactional
