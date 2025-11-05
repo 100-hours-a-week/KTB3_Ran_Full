@@ -106,15 +106,10 @@ public class PostService {
     }
 
 
-
     //좋아요, 조회, 댓글 갯수 조회
     @Transactional
     public PostCountDto getLikeCount(long postId) {
-        int likeCount = postRepository.findLikeCountByPostId(postId);
-        int commentCount = postRepository.findCommentCountByPostId(postId);
-        int viewCount = postRepository.findViewCountByPostId(postId);
-        //좋아요 DTO 꺼냄
-        return new PostCountDto(commentCount,likeCount,viewCount); //좋아요 갯수 반환
+        return postRepository.findCountByPostId(postId);
     }
 
 
