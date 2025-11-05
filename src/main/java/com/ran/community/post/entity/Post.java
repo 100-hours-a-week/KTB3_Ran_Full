@@ -88,7 +88,7 @@ public class Post extends AuditingEntity {
         this.commentCount--;
     }
 
-    //조회수 증가
+    //조회수 증가 //더티 체크 일어나는거 아님?
     public void increaseViewCount() {
         this.viewCount++;
     }
