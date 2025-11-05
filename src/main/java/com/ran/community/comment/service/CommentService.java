@@ -60,11 +60,16 @@ public class CommentService {
         }
     }
 
+    //
+    private List<Comment> findByPost_Id(long postId){
+        return commentRepository.findByPost_Id(postId).orElseThrow(()->new IllegalArgumentException("댓글이 없습니다."));
+    }
 
-    //특정 게시글(id)의 댓글 조회 //find : 조회 //save : 생성 // update : 수정 // delete : 삭제
+
+    //특정 게시글(id)의 댓글 전체 조회 fetch join
     @Transactional
     public List<CommentDataDTO> commentListByPostId(long postId) {
-        List<Comment> comments = commentRepository.findByPost_Id(postId);
+        List<Comment> comments = findByPost_Id(postId);
         return comments.stream().map(comment -> new CommentDataDTO(comment.getCommentId(),comment.getContent(),comment.getUser().getId())).collect(Collectors.toList());
     }
 
@@ -73,6 +78,7 @@ public class CommentService {
     public CommentDataDTO commentCreate(long userId, long postId, CommentInputDto commentInputDto) {
         User user = findByUserId(userId);
         Post post = findByPostId(postId);
+        post.increaseCommentCount();//댓글 갯수 증가
 
         Comment cmt = commentRepository.save(new Comment(commentInputDto.getContent(),user,post));
         return new CommentDataDTO(cmt);
@@ -95,11 +101,16 @@ public class CommentService {
     @Transactional
     public CommentDataDTO commentDelete(long userId, long postId, long commentId) {
         Comment comment = findByCommentId(commentId);
+
         validationUser(userId,postId,comment);//수정권한 확인
+
+        Post post = findByPostId(postId);
+        post.decreaseCommentCount();//댓글 갯수 감소
 
         commentRepository.deleteById(commentId);
         return new CommentDataDTO(comment);
     }
+
 
 
 }
