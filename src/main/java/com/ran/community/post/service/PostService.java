@@ -1,9 +1,6 @@
 package com.ran.community.post.service;
 
-import com.ran.community.comment.entity.Comment;
-import com.ran.community.like.entity.PostLike;
 import com.ran.community.like.repository.LikeRepository;
-import com.ran.community.like.service.LikeService;
 import com.ran.community.post.dto.request.PostUpdatedFormDto;
 import com.ran.community.post.dto.response.*;
 import com.ran.community.post.dto.request.PostCreateFormDto;
@@ -11,16 +8,13 @@ import com.ran.community.post.entity.Post;
 import com.ran.community.post.repository.PostRepository;
 import com.ran.community.user.entity.User;
 import com.ran.community.user.repository.UserRepository;
-import com.ran.community.user.service.UserService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -106,9 +100,9 @@ public class PostService {
 //        return postList.stream().map(post -> new PostDto(post)).collect(Collectors.toList());
 //    }
 
-    public List<PostDto> findAllPosts() {
+    public List<PostGetDto> findAllPosts() {
         List<Post> postList = findPostAll();
-        return postList.stream().map(post -> new PostDto(post)).collect(Collectors.toList());
+        return postList.stream().map(post -> new PostGetDto(post)).collect(Collectors.toList());
     }
 
 
