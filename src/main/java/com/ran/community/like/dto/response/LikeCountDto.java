@@ -6,10 +6,8 @@ import lombok.Getter;
 @Getter
 public class LikeCountDto {
     private int count;
-    private long id;
 
     public LikeCountDto(int count, long id) {
         this.count = count;
-        this.id = id;
     }
 }
