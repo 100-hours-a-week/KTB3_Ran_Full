@@ -1,28 +1,20 @@
 package com.ran.community.post.controller;
 
 import com.ran.community.global.ApiResponse;
-import com.ran.community.like.dto.response.LikeCountDto;
-import com.ran.community.like.dto.response.LikeDataDto;
 import com.ran.community.like.dto.response.LikeStateDto;
-import com.ran.community.like.entity.PostLike;
 import com.ran.community.like.service.LikeService;
 import com.ran.community.post.dto.request.PostUpdatedFormDto;
-import com.ran.community.post.dto.response.PageDto;
+import com.ran.community.post.dto.response.*;
 import com.ran.community.post.dto.request.PostCreateFormDto;
-import com.ran.community.post.dto.response.PostDataDto;
-import com.ran.community.post.dto.response.PostLikeCountDto;
-import com.ran.community.post.entity.Post;
 import com.ran.community.post.service.PostService;
-import com.ran.community.user.entity.User;
 import com.ran.community.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.util.List;
 
 @RequestMapping("/posts")
 @RestController
@@ -48,25 +40,41 @@ public class PostController {
         return ApiResponse.created(postDataDto,"created_post");
     }
 
-    //특정 게시물 조회 //
+    //특정 게시물 조회 // fetch join O
     @GetMapping("/{postId}")
-    public ResponseEntity<ApiResponse<PostDataDto>> postRead(@PathVariable Long postId){
+    public ResponseEntity<ApiResponse<PostDataDto>> postRead(@PathVariable long postId){
         PostDataDto post = postService.findByPost(postId);
         return ApiResponse.success(post,"read_post");
     }
 
+//    //특정 게시물 조회 /// 부하테스트 : fetch join X
+//    @GetMapping("/{postId}/test")
+//    public ResponseEntity<ApiResponse<PostDataDto>> postReadTest(@PathVariable Long postId){
+//        PostDataDto post = postService.findByPostOrigin(postId);
+//        return ApiResponse.success(post,"read_post");
+//    }
+
     //전체 게시물 조회 //
     @GetMapping()
-    public ResponseEntity<ApiResponse<PageDto>> postsRead(HttpSession httpSession,@RequestParam int page, @RequestParam int limit){
+    public ResponseEntity<ApiResponse<List<PostGetDto>>> postsRead(){
         //userId가 있을 경우에만 확인
-        long userId = ((long) httpSession.getAttribute("id"));
-        PageDto pageData = postService.postsRead(page,limit);//페이지 네이션 되어있음.
-        return ApiResponse.success(pageData,"read_all_post");
+//        long userId = ((long) httpSession.getAttribute("id"));
+        List<PostGetDto> postList = postService.findAllPosts();
+        return ApiResponse.success(postList,"read_all_post");
     }
+
+//    //전체 게시물 조회 // fetch join 없이 부하 테스트 용
+//    @GetMapping("/test")
+//    public ResponseEntity<ApiResponse<List<PostDto>>> postsReadTest(){
+//        //userId가 있을 경우에만 확인
+////        long userId = ((long) httpSession.getAttribute("id"));
+//        List<PostDto> postList = postService.findAllPostsTest();
+//        return ApiResponse.success(postList,"read_all_post");
+//    }
 
     //게시물 수정 //
     @PatchMapping("/{postId}")
-    public ResponseEntity<ApiResponse<PostDataDto>> updatePost(HttpSession httpSession, @Valid @RequestBody PostUpdatedFormDto postUpdatedFormDto, @PathVariable Long postId){
+    public ResponseEntity<ApiResponse<PostDataDto>> updatePost(HttpSession httpSession, @Valid @RequestBody PostUpdatedFormDto postUpdatedFormDto, @PathVariable long postId){
         long userId = ((long) httpSession.getAttribute("id"));
         PostDataDto postDataDto = postService.updatePost(postId,userId,postUpdatedFormDto);
         return ApiResponse.success(postDataDto,"update_post");
@@ -74,7 +82,7 @@ public class PostController {
 
     //게시물 삭제 //
     @DeleteMapping("/{postId}")
-    public ResponseEntity<ApiResponse<PostDataDto>> deletePost(HttpSession httpSession,@PathVariable Long postId){
+    public ResponseEntity<ApiResponse<PostDataDto>> deletePost(HttpSession httpSession,@PathVariable long postId){
         long userId = ((long) httpSession.getAttribute("id"));
         PostDataDto postDataDto = postService.deletePost(postId,userId);
         return ApiResponse.success(postDataDto,"delete_post");
@@ -84,7 +92,7 @@ public class PostController {
     //좋아요를 분리해야되나?  ㅇㅇ 분리함.
     //특정 게시물의 좋아요 생성
     @PostMapping("/{postId}/likes")
-    public ResponseEntity<ApiResponse<LikeStateDto>> like(@PathVariable Long postId, HttpSession session) {
+    public ResponseEntity<ApiResponse<LikeStateDto>> like(@PathVariable long postId, HttpSession session) {
         long userId = (long) session.getAttribute("id");
         LikeStateDto likeStateDto = likeService.saveLike(userId,postId);
         return ApiResponse.created(likeStateDto,"like");
@@ -92,19 +100,26 @@ public class PostController {
 
     //특정 게시물의 좋아요 삭제
     @DeleteMapping("/{postId}/likes")
-    public ResponseEntity<ApiResponse<LikeStateDto>> unlike(@PathVariable Long postId, HttpSession session) {
+    public ResponseEntity<ApiResponse<LikeStateDto>> unlike(@PathVariable long postId, HttpSession session) {
         long userId = (long) session.getAttribute("id");
         LikeStateDto likeStateDto = likeService.deleteByLike(postId,userId);
         return ApiResponse.success(likeStateDto,"unlike");
 
     }
 
-    //특정 게시물의 좋아요 조회
-    @GetMapping("/{postId}/likes")
-    public ResponseEntity<ApiResponse<PostLikeCountDto>> getLikes(@PathVariable Long postId) {
-        PostLikeCountDto likeCountDto = postService.getLikeCount(postId);
-        return ApiResponse.success(likeCountDto,"get_like");
+    //특정 게시물의 좋아요 갯수, 댓글 갯수, 조회수 조회
+    @GetMapping("/{postId}/count")
+    public ResponseEntity<ApiResponse<PostCountDto>> getLikes(@PathVariable long postId) {
+        PostCountDto CountDto = postService.getLikeCount(postId);
+        return ApiResponse.success(CountDto,"get_like");
     }
+
+//    //특정 게시물의 좋아요 갯수 조회
+//    @GetMapping("/{postId}/count")
+//    public ResponseEntity<ApiResponse<PostLikeCountDto>> getLikes(@PathVariable long postId) {
+//        PostCountDto likeCountDto = postService.getLikeCount(postId);
+//        return ApiResponse.success(,"get_like");
+//    }
 //    /// ///부하테스트
 //    //1
 //    @GetMapping("/{postId}/findByIdTest")
