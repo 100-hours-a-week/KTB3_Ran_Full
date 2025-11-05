@@ -5,11 +5,9 @@ import lombok.Getter;
 
 @Getter
 public class PostLikeCountDto {
-    private long postId;
     private int likeCount;
 
-    public PostLikeCountDto(long postId, int likeCount) {
-        this.postId = postId;
+    public PostLikeCountDto(long postId) {
         this.likeCount = likeCount;
     }
 }
