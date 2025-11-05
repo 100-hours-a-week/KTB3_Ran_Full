@@ -42,10 +42,12 @@ public class Post extends AuditingEntity {
     @Column(name = "view_count", nullable = false)
     private int viewCount = 0;
 
+    //양방향
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    //단방향
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     @BatchSize(size = 50)
     private List<Comment> comments = new ArrayList<>();
@@ -76,4 +78,22 @@ public class Post extends AuditingEntity {
     public void decreaseLikeCount() {
         this.likeCount--;
     }
+
+    //댓글 수 증가
+    public void increaseCommentCount() {
+        this.commentCount++;
+    }
+    //댓글 수 감소
+    public void decreaseCommentCount() {
+        this.commentCount--;
+    }
+
+    //조회수 증가
+    public void increaseViewCount() {
+        this.viewCount++;
+    }
+
+
+
+
 }

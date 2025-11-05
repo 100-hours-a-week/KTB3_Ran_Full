@@ -30,9 +30,11 @@ public class User extends AuditingEntity {
     @Column(length = 255, name = "password", nullable = false)
     private String password;
 
+    //유저의 post
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Post> posts = new ArrayList<>();
 
+    //유저의 user
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
