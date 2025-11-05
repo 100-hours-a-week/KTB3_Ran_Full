@@ -6,19 +6,19 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class CommentDataDTO {
+public class CommentDataDto {
     private long commentId;
     private String content;
     private long authorId;
     private LocalDateTime created_at;
 
-    public CommentDataDTO(long commentId, String content, long authorId) {
+    public CommentDataDto(long commentId, String content, long authorId) {
         this.commentId = commentId;
         this.content = content;
         this.authorId = authorId;
     }
 
-    public CommentDataDTO(Comment comment) {
+    public CommentDataDto(Comment comment) {
         this.commentId = comment.getCommentId();
         this.content = comment.getContent();
         this.authorId = comment.getUser().getId();
