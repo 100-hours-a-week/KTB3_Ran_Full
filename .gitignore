@@ -39,3 +39,4 @@ out/
 frontend/src/shared/ui/Button/Button.js
 frontend/config/.env.local.js
 frontend/.env
+frontend/public/env.js
