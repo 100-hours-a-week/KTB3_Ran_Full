@@ -32,20 +32,26 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     //postId에 대해 댓글 조회하기
     //post 테이블 데이터에서 댓글을 가지고 올건데, postId값인 id에서 p(전체)를 가져올것임.
     //fetchjoin
-    @Query("SELECT p FROM Post p JOIN FETCH p.comments WHERE p.id = :postId")
-    Optional<Post> findByPostIdWithComments(@Param("postId") long postId);
+//    @Query("SELECT p FROM Post p JOIN FETCH p.comments WHERE p.id = :postId")
+//    Post findByPostIdWithComments(@Param("postId") long postId);
 
     //post 작성자 가져오기
     @Query("SELECT p FROM Post p JOIN FETCH p.user WHERE p.id = :postId")
     Optional<Post> findByPostIdWithAuthor(@Param("postId") long postId);
 
     //post + user + comment
-    @Query("SELECT p FROM Post p JOIN FETCH p.user LEFT JOIN FETCH p.comments WHERE p.id = :postId")
+    @Query("""
+    SELECT DISTINCT p
+    FROM Post p
+    LEFT JOIN FETCH p.user
+    LEFT JOIN FETCH p.comments
+    WHERE p.id = :postId
+""")
     Optional<Post> findByPostIdWithCommentsAuthor(@Param("postId") long postId);
 
     //전체 post + user + comment
     @Query("SELECT p FROM Post p JOIN FETCH p.user")
-    Optional<List<Post>> findWithCommentsAuthor();
+    List<Post> findWithCommentsAuthor();
 
 
     @Query("SELECT p FROM Post p JOIN FETCH p.user ORDER BY p.created_at DESC")

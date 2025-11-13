@@ -54,10 +54,10 @@ public class PostService {
         return new PostDataDto(postRepository.save(post));
     }
 
-    //optional 예외처리
-    private Post findByPostIdWithComments(long postId) {
-        return postRepository.findByPostIdWithComments(postId).orElseThrow(()->new IllegalArgumentException("내용이 없습니다."));
-    }
+//    //optional 예외처리
+//    private Post findByPostIdWithComments(long postId) {
+//        return postRepository.findByPostIdWithComments(postId);
+//    }
     
     //게시물 가져올 때 getUser 하기 
     private Post findByPostIdWithAuthor(long postId) {
@@ -77,11 +77,10 @@ public class PostService {
     //특정 게시물 상세 조회 + 댓글 조회까지 //fetch join 개선
     @Transactional
     public PostDataDto findByPost(Long postId) {
-        Post post = findByPostIdWithComments(postId);
+        Post post = findByPostIdWithCommentsAuthor(postId);
         post.increaseViewCount(); //조회수 증가
 
-        Post postIdWithCommentsAuthor = findByPostIdWithCommentsAuthor(postId);
-        return new PostDataDto(postIdWithCommentsAuthor);
+        return new PostDataDto(post);
     }
 
 //    /// 부하테스트 오리진 : fetch join 없이
