@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 //전체보기 DTO
 @Getter
 public class PostGetDto {
+    private long id;
     private String title;
     private String author;
     private String imgUrl;
@@ -21,6 +22,7 @@ public class PostGetDto {
 
 
     public PostGetDto(Post post) {
+        this.id = post.getId();
         this.title = post.getTitle();
         this.author = post.getUser().getUsername();
         this.imgUrl = post.getImgUrl();
