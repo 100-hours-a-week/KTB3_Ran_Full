@@ -13,7 +13,13 @@ import java.util.Optional;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     //특정 postId의 댓글 + user
-    @Query("SELECT c FROM Comment c JOIN FETCH c.user WHERE c.post.id = :postId")
-    Optional<List<Comment>> findByPost_Id(@Param("postId") long postId);
+    @Query("""
+    SELECT DISTINCT c 
+    FROM Comment c 
+    JOIN FETCH c.user 
+    WHERE c.post.id = :postId 
+    ORDER BY c.created_at DESC 
+""")
+    List<Comment> findByPost_Id(@Param("postId") long postId);
 
 }

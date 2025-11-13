@@ -61,7 +61,7 @@ public class CommentService {
 
     //
     private List<Comment> findByPost_Id(long postId){
-        return commentRepository.findByPost_Id(postId).orElseThrow(()->new IllegalArgumentException("댓글이 없습니다."));
+        return commentRepository.findByPost_Id(postId);
     }
 
 

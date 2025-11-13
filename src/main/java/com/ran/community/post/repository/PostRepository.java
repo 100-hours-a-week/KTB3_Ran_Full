@@ -44,10 +44,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     SELECT DISTINCT p
     FROM Post p
     LEFT JOIN FETCH p.user
-    LEFT JOIN FETCH p.comments
+    LEFT JOIN FETCH p.comments c
     WHERE p.id = :postId
+    ORDER BY c.created_at DESC
 """)
     Optional<Post> findByPostIdWithCommentsAuthor(@Param("postId") long postId);
+
 
     //전체 post + user + comment
     @Query("SELECT p FROM Post p JOIN FETCH p.user")
