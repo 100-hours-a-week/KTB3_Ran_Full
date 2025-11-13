@@ -71,7 +71,7 @@ public class PostService {
 
     //전체 게시물 조회
     private List<Post> findPostAll(){
-        return postRepository.findWithCommentsAuthor().orElseThrow(()->new IllegalArgumentException("게시글이 없습니다."));
+        return postRepository.findAllWithAuthorOrderByCreatedAtDesc();
     }
 
     //특정 게시물 상세 조회 + 댓글 조회까지 //fetch join 개선

@@ -46,4 +46,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     //전체 post + user + comment
     @Query("SELECT p FROM Post p JOIN FETCH p.user")
     Optional<List<Post>> findWithCommentsAuthor();
+
+
+    @Query("SELECT p FROM Post p JOIN FETCH p.user ORDER BY p.created_at DESC")
+    List<Post> findAllWithAuthorOrderByCreatedAtDesc();
 }
