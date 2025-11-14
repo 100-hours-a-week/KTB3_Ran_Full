@@ -17,7 +17,9 @@ public class WebConfig {
                         .allowedOrigins("http://127.0.0.1:5500") // 프론트 주소
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
+                        .exposedHeaders("Set-Cookie")
                         .allowCredentials(true);
+
             }
         };
     }

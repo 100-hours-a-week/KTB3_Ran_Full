@@ -24,7 +24,7 @@ public class CommentController {
     @PostMapping()
     public ResponseEntity<ApiResponse<CommentDataDto>> commentCreate(HttpSession session, @PathVariable Long postId, @RequestBody CommentInputDto commentInputDto) {
         long userId = (long) session.getAttribute("id");
-        CommentDataDto commentDataDTO = commentService.commentCreate(postId,userId,commentInputDto);
+        CommentDataDto commentDataDTO = commentService.commentCreate(userId,postId,commentInputDto);
         return ApiResponse.created(commentDataDTO,"comment_created_success");
     }
 
