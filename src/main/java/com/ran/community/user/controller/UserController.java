@@ -45,29 +45,33 @@ public class UserController {
     }
 
     //회원 정보 조회 //
-    @GetMapping("/{userId}")
-    public ResponseEntity<?> userInfo(@PathVariable Long userId){
+    @GetMapping()
+    public ResponseEntity<?> userInfo(HttpSession session){
+        long userId = (long) session.getAttribute("id");
         UserDataResponseDTO userDataResponseDTO = userService.getUserData(userId);
         return ApiResponse.success(userDataResponseDTO,"read_user");
     }
 
     //회원 정보 수정 //이메일, 닉네임 수정 페이지
-    @PatchMapping("/{userId}")
-    public ResponseEntity<?> userPatchInfo(@Valid @PathVariable Long userId,@RequestBody UserInfoUpdatedDto userInfoUpdatedDto){
+    @PatchMapping("/userInfo")
+    public ResponseEntity<?> userPatchInfo(HttpSession session,@RequestBody UserInfoUpdatedDto userInfoUpdatedDto){
+        long userId = (long) session.getAttribute("id");
         UserDataResponseDTO userDataResponseDTO = userService.updateUser(userId, userInfoUpdatedDto);
         return ApiResponse.success(userDataResponseDTO,"user_update");
     }
 
     //회원 정보 수정 //비밀 번호
-    @PatchMapping("/{userId}/password")
-    public ResponseEntity<?> userPatchPassword(@Valid @PathVariable Long userId,@RequestBody UserPWUpdateDto userPWUpdateDto){
+    @PatchMapping("/userPassword")
+    public ResponseEntity<?> userPatchPassword(HttpSession session,@RequestBody UserPWUpdateDto userPWUpdateDto){
+        long userId = (long) session.getAttribute("id");
         userService.updateUserPassword(userId, userPWUpdateDto);
-        return ApiResponse.success(true,"user_update");
+        return ApiResponse.success("비밀번호가 변경되었습니다.","user_update");
     }
 
     //회원 탈퇴
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<?> userDelete(@PathVariable Long userId){
+    @DeleteMapping()
+    public ResponseEntity<?> userDelete(HttpSession session){
+        long userId = (long) session.getAttribute("id");
         UserDataResponseDTO userDataResponseDTO = userService.deletedUser(userId);
         return ApiResponse.success(userDataResponseDTO,"user_delete");
     }

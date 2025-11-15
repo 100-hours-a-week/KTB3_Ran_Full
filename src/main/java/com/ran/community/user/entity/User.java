@@ -46,7 +46,6 @@ public class User extends AuditingEntity {
     }
 
     public void updatedUserInfo(UserInfoUpdatedDto userInfoUpdatedDto){
-        this.email = userInfoUpdatedDto.getEmail();
         this.username = userInfoUpdatedDto.getUsername();
     }
 
