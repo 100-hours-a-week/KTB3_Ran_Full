@@ -76,11 +76,18 @@ public class PostService {
 
     //특정 게시물 상세 조회 + 댓글 조회까지 //fetch join 개선
     @Transactional
-    public PostDataDto findByPost(Long postId) {
+    public PostDataDto findByPost(Long userId, Long postId) {
         Post post = findByPostIdWithCommentsAuthor(postId);
+        User user = findByUserId(userId);
         post.increaseViewCount(); //조회수 증가
+        PostDataDto dto = new PostDataDto(post);
+        // 로그인 한 유저가 있을 때만 좋아요 여부 체크
+        if (userId != null) {
+            boolean liked = likeRepository.existsByUserAndPost(user, post);
+            dto.doLiked(liked);
+        }
 
-        return new PostDataDto(post);
+        return dto;
     }
 
 //    /// 부하테스트 오리진 : fetch join 없이

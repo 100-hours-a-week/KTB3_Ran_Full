@@ -2,6 +2,7 @@ package com.ran.community.post.dto.response;
 
 import com.ran.community.post.entity.Post;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -31,4 +32,5 @@ public class PostGetDto {
         this.viewCount = post.getViewCount();
         this.createdAt = post.getCreated_at();
     }
+
 }

@@ -44,8 +44,9 @@ public class PostController {
 
     //특정 게시물 조회 // fetch join O
     @GetMapping("/{postId}")
-    public ResponseEntity<ApiResponse<PostDataDto>> postRead(@PathVariable long postId){
-        PostDataDto post = postService.findByPost(postId);
+    public ResponseEntity<ApiResponse<PostDataDto>> postRead(HttpSession httpSession, @PathVariable long postId){
+        long userId = (long) httpSession.getAttribute("id");
+        PostDataDto post = postService.findByPost(userId, postId);
         return ApiResponse.success(post,"read_post");
     }
 

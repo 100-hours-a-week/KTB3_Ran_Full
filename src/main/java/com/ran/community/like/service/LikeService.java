@@ -87,6 +87,12 @@ public class LikeService {
         return new LikeStateDto(true,post.getLikeCount());
     }
 
+    //해당 postId에 유저가 좋아요를 눌렀는지 확인
+    private boolean hasUserLikedPost(Long userId, Long postId) {
+        Post post = findByPostId(postId);
+        User user = findByUserId(userId);
+        return likeRepository.existsByUserAndPost(user, post);
+    }
 
 
 
