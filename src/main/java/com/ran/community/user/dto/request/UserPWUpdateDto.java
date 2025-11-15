@@ -5,17 +5,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 
 @Getter
-public class UserUpdatedDto {
-    @NotBlank(message = "이메일을 입력해주세요.")
-    @Pattern(
-            regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,}$",
-            message = "올바른 이메일 주소 형식을 입력해주세요."
-    )
-    private String email;
-
-    @NotBlank(message = "닉네임을 입력해주세요.")
-    private String username;
-
+public class UserPWUpdateDto {
     @NotBlank(message = "비밀번호를 입력해주세요.")
     @Pattern( //정규식
             regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*]).{8,20}$",

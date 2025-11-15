@@ -2,20 +2,18 @@ package com.ran.community.user.controller;
 
 import com.ran.community.global.ApiResponse;
 import com.ran.community.user.dto.request.UserLoginDto;
+import com.ran.community.user.dto.request.UserPWUpdateDto;
 import com.ran.community.user.dto.request.UserSignupFormDto;
-import com.ran.community.user.dto.request.UserUpdatedDto;
+import com.ran.community.user.dto.request.UserInfoUpdatedDto;
 import com.ran.community.user.dto.response.UserDataResponseDTO;
 import com.ran.community.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.beans.Transient;
 
 @RestController
 @RequestMapping("/users")
@@ -53,11 +51,18 @@ public class UserController {
         return ApiResponse.success(userDataResponseDTO,"read_user");
     }
 
-    //회원 정보 수정 //
+    //회원 정보 수정 //이메일, 닉네임 수정 페이지
     @PatchMapping("/{userId}")
-    public ResponseEntity<?> userPatchInfo(@Valid @PathVariable Long userId,@RequestBody UserUpdatedDto userUpdatedDto){
-        UserDataResponseDTO userDataResponseDTO = userService.updateUser(userId,userUpdatedDto);
+    public ResponseEntity<?> userPatchInfo(@Valid @PathVariable Long userId,@RequestBody UserInfoUpdatedDto userInfoUpdatedDto){
+        UserDataResponseDTO userDataResponseDTO = userService.updateUser(userId, userInfoUpdatedDto);
         return ApiResponse.success(userDataResponseDTO,"user_update");
+    }
+
+    //회원 정보 수정 //비밀 번호
+    @PatchMapping("/{userId}/password")
+    public ResponseEntity<?> userPatchPassword(@Valid @PathVariable Long userId,@RequestBody UserPWUpdateDto userPWUpdateDto){
+        userService.updateUserPassword(userId, userPWUpdateDto);
+        return ApiResponse.success(true,"user_update");
     }
 
     //회원 탈퇴

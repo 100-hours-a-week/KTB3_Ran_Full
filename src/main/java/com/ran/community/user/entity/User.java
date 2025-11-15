@@ -3,7 +3,8 @@ package com.ran.community.user.entity;
 import com.ran.community.comment.entity.Comment;
 import com.ran.community.global.entity.AuditingEntity;
 import com.ran.community.post.entity.Post;
-import com.ran.community.user.dto.request.UserUpdatedDto;
+import com.ran.community.user.dto.request.UserInfoUpdatedDto;
+import com.ran.community.user.dto.request.UserPWUpdateDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,10 +45,13 @@ public class User extends AuditingEntity {
         this.password = password;
     }
 
-    public void updatedUser(UserUpdatedDto userUpdatedDto){
-        this.email = userUpdatedDto.getEmail();
-        this.username = userUpdatedDto.getUsername();
-        this.password = userUpdatedDto.getPassword();
+    public void updatedUserInfo(UserInfoUpdatedDto userInfoUpdatedDto){
+        this.email = userInfoUpdatedDto.getEmail();
+        this.username = userInfoUpdatedDto.getUsername();
+    }
+
+    public void updatedUserPassword(UserPWUpdateDto userPWUpdateDto){
+        this.password = userPWUpdateDto.getPassword();
     }
 
 }
