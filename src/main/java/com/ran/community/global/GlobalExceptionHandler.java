@@ -17,7 +17,7 @@ public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
 
-    // 일반 IllegalArgumentException (중복된 닉네임)
+    // 일반 IllegalArgumentException
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse<?>> handleIllegalArgumentException(IllegalArgumentException ex) {
         logger.warn("IllegalArgumentException: {}", ex.getMessage());
