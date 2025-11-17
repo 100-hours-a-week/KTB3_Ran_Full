@@ -1,6 +1,7 @@
 package com.ran.community.user.service;
 
-import com.ran.community.user.dto.request.UserUpdatedDto;
+import com.ran.community.user.dto.request.UserInfoUpdatedDto;
+import com.ran.community.user.dto.request.UserPWUpdateDto;
 import com.ran.community.user.entity.User;
 import com.ran.community.user.dto.request.UserLoginDto;
 import com.ran.community.user.dto.request.UserSignupFormDto;
@@ -113,10 +114,17 @@ public class UserService {
 
     //유저 정보 수정
     @Transactional
-    public UserDataResponseDTO updateUser(Long id, UserUpdatedDto userUpdatedDto) {
+    public UserDataResponseDTO updateUser(Long id, UserInfoUpdatedDto userInfoUpdatedDto) {
         User user = findById(id);
-        user.updatedUser(userUpdatedDto);
+        user.updatedUserInfo(userInfoUpdatedDto);
         return new UserDataResponseDTO(user);
+    }
+
+    //유저 비밀번호 수정
+    @Transactional
+    public void updateUserPassword(Long id, UserPWUpdateDto userPWUpdateDto) {
+        User user = findById(id);
+        user.updatedUserPassword(userPWUpdateDto);
     }
 
     //유저 정보 삭제
