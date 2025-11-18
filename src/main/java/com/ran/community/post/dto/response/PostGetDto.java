@@ -13,6 +13,7 @@ public class PostGetDto {
     private String title;
     private String author;
     private String imgUrl;
+    private String content;
 
     private int commentCount;
     private int likeCount;
@@ -27,6 +28,7 @@ public class PostGetDto {
         this.title = post.getTitle();
         this.author = post.getUser().getUsername();
         this.imgUrl = post.getImgUrl();
+        this.content = post.getContent();
         this.commentCount = post.getCommentCount();
         this.likeCount = post.getLikeCount();
         this.viewCount = post.getViewCount();
