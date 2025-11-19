@@ -48,7 +48,7 @@ public class Post extends AuditingEntity {
     private User user;
 
     //단방향
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @BatchSize(size = 50)
     private List<Comment> comments = new ArrayList<>();
 
@@ -91,6 +91,10 @@ public class Post extends AuditingEntity {
     //조회수 증가 //더티 체크 일어나는거 아님?
     public void increaseViewCount() {
         this.viewCount++;
+    }
+
+    public void doLiked(boolean liked){
+        this.liked = liked;
     }
 
 
