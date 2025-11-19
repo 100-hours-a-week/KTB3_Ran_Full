@@ -54,6 +54,7 @@ public class Post extends AuditingEntity {
 
 
 
+
     public Post(String title, String content, String imgUrl, User user) {
         this.title = title;
         this.content = content;
@@ -93,9 +94,6 @@ public class Post extends AuditingEntity {
         this.viewCount++;
     }
 
-    public void doLiked(boolean liked){
-        this.liked = liked;
-    }
 
 
 
