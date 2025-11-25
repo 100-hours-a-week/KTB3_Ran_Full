@@ -48,10 +48,13 @@ public class Post extends AuditingEntity {
     private User user;
 
     //단방향
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @BatchSize(size = 50)
     private List<Comment> comments = new ArrayList<>();
 
+    //양방향 데베설계
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true )
+    private List<PostLike> postLikes;
 
 
     public Post(String title, String content, String imgUrl, User user) {
@@ -92,6 +95,7 @@ public class Post extends AuditingEntity {
     public void increaseViewCount() {
         this.viewCount++;
     }
+
 
 
 

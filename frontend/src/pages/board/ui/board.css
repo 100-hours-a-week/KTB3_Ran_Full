@@ -3,3 +3,15 @@
   gap: 16px;
   flex-direction: column;
 }
+
+.boardTitle {
+  text-align: left;
+  color: var(--color-text);
+  padding: 60px 0;
+}
+
+.post-create-button {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+}

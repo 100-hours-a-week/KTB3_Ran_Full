@@ -1,13 +1,13 @@
-import main from "../../../app/main.js";
 import { Endpoint } from "../../../shared/api/endpoint.js";
+import { navigateTo } from "../../../shared/router/Router.js";
 import sessionUser from "../../../shared/utils/session.js";
 
-async function login({ email, password }) {
+async function login(dto) {
   try {
     const response = await fetch(Endpoint.USER.LOGIN, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify(dto),
       credentials: "include",
       cache: "no-store",
     });
@@ -17,10 +17,12 @@ async function login({ email, password }) {
 
     //세션에 유저 저장
     if (response.ok) {
-      const data = json.data;
+      const data = json.data || "data";
       console.log("data :", data);
       sessionUser.setUser(data);
-      main();
+      navigateTo("/home");
+      console.log("이동완료");
+      return;
     }
 
     //에러 경고 응답

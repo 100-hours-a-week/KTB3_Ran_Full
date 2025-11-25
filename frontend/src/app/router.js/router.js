@@ -8,10 +8,20 @@ import PasswordModifyPage from "../../pages/passwordModify/ui/PasswordModifyPage
 import handleUserInfo from "../../pages/info/lib/handleUserInfo.js";
 import handlePasswordModify from "../../pages/passwordModify/lib/handlePasswordModify.js";
 import BoardPostUpdatePage from "../../pages/board/update/ui/BoardPostUpdatePage.js";
+import LoginPageVDOM from "../../pages/login/ui/LoginPageVDOM.js";
+import loginEffects from "../../pages/login/model/LoginPageEffect.js";
+import LoginState from "../../pages/login/model/LoginState.js";
+import SignupPageVDOM from "../../pages/signup/ui/SignUpPageVDOM.js";
+import signupState from "../../pages/signup/model/signupState.js";
+import signupEffects from "../../pages/signup/model/signupEffects.js";
 
 export const routerPage = {
-  "/login": LoginPage,
-  "/signup": SignUpPage,
+  "/login": { page: LoginPageVDOM, effect: loginEffects, state: LoginState },
+  "/signup": {
+    page: SignupPageVDOM,
+    effect: signupEffects,
+    state: signupState,
+  },
   "/home": BoardHomePage,
   "/post": BoardPostCreatPage,
   "/user/info": handleUserInfo,

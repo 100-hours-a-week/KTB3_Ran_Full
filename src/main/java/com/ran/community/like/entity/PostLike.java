@@ -30,6 +30,7 @@ public class PostLike extends AuditingEntity {
     private Post post;
 
 
+
     public PostLike(User user, Post post) {
         this.user = user;
         this.post =  post;

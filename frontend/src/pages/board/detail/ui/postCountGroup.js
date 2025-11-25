@@ -1,70 +1,79 @@
 import likeCreateDeleteTogle from "../../../../features/like/model/likeCreateDeleteTogle.js";
-import handleLikeCreat from "../../../like/lib/handleLikeCreat.js";
-import handleLikeDelete from "../../../like/lib/handleLikeDelete.js";
 
 function postCountGroup(props) {
   const container = document.createElement("div");
   container.className = "post-count-group";
-  console.log("props :", props);
 
   container.innerHTML = /*HTML*/ `
         <div class="count-content" id="likeCount">
-            <div>${props.likeCount}</div>
-            <div>좋아요수</div>
+            <img class="like-icon" src="public/icon/unliked_icon.svg" alt="좋아요">
+            <div class="count">${props.likeCount}</div>
         </div>
         <div class="count-content">
-            <div>${props.viewCount}</div>
-            <div>조회수</div>
-        </div>
-        <div class="count-content">
+            <img src="public/icon/comment_icon.svg" alt="댓글">
             <div>${props.commentCount}</div>
-            <div>댓글</div>
+        </div>
+        <div class="count-content">
+            <img src="public/icon/view_icon.svg" alt="조회수">
+            <div>${props.viewCount}</div>
         </div>
   `;
 
   const style = document.createElement("style");
   style.textContent = /*CSS*/ `
-
     #likeCount:hover{
         cursor:pointer;
     }
 
-    #likeCount.enabled{
-        background:var(--color-primary);
-    }
-  
     .post-count-group{
-        padding : var(--padding-h3);
         display:flex;
-        gap:var(--gap-mn);
+        gap:var(--gap-mdn);
         justify-content: center;
     }
     .count-content{
-        background:var(--color-option);
-        padding:var(--gap-mn);
-        border-radius:var(--radius-md);
-        width:76px;
-        font-size:var(--font-size-base);
-      
+        display:flex;
+        gap:7px;
+        align-items: center;
+        font-size:var(--font-size-sm);
+        font-weight:var(--font-weight-bold);
     }
     .count-content div{
-        
+        display:flex;
+        color:var(--color-meta);
+    }
+    .count-content .count{
+      min-width:13px;
     }
   `;
 
   const like = container.querySelector("#likeCount");
+  const likeImg = like.querySelector(".like-icon");
+
+  function updateLikeIcon() {
+    if (like.classList.contains("enabled")) {
+      likeImg.src = "public/icon/liked_icon.svg";
+    } else {
+      likeImg.src = "public/icon/unliked_icon.svg";
+    }
+  }
 
   function __updateState() {
     likeCreateDeleteTogle({ container: like, props });
+    updateLikeIcon();
   }
-  //초기화
+
   __updateState();
 
-  const containerWrapper = document.createElement("div");
-  containerWrapper.appendChild(style);
-  containerWrapper.appendChild(container);
+  like.addEventListener("click", () => {
+    likeCreateDeleteTogle({ container: like, props });
+    updateLikeIcon();
+  });
 
-  return containerWrapper;
+  const wrapper = document.createElement("div");
+  wrapper.appendChild(style);
+  wrapper.appendChild(container);
+
+  return wrapper;
 }
 
 export default postCountGroup;

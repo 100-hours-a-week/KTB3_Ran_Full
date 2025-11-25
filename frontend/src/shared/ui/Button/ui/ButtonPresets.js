@@ -12,22 +12,26 @@ import handlePostEdit from "../../../lib/handlePostUpdate.js";
 import handlePostUpdate from "../../../lib/handlePostUpdate.js";
 import commentUpdateFetch from "../../../../features/comment/api/commentUpdateFetch.js";
 import handleUserPasswordUpdate from "../../../../pages/info/lib/handleUserPasswordUpdate.js";
+import imgButton from "../../../../widgets/imgButton.js/ui/imgButton.js";
+import ButtonVDOM from "./VDOM/PrimaryButton.js";
 
 // PrimaryButton
-export function loginBtn() {
-  return Button({
+export function loginBtn(state) {
+  return ButtonVDOM({
     text: "로그인",
     onClick: handleLoginClick,
+    state: state,
     styleProps: {
       width: 100,
     },
   });
 }
 
-export function signupBtn() {
-  return Button({
+export function signupBtn(state) {
+  return ButtonVDOM({
     text: "회원가입",
     onClick: handleSignupClick,
+    state: state,
     styleProps: {
       width: 100,
     },
@@ -36,12 +40,16 @@ export function signupBtn() {
 
 //게시글 생성 버튼
 export function postCreateBtn() {
-  return Button({
-    text: "게시물 생성",
+  return imgButton({
+    src: "public/icon/boardCreat_icon.svg",
+    alt: "글 생성 버튼",
     onClick: handlerPostCreat,
     styleProps: {
-      radius: 16,
-      margin: "12px 0",
+      radius: 50,
+      width: 60,
+      height: 60,
+      margin: "12px",
+      background: "var(--color-primary)",
     },
   });
 }
@@ -54,8 +62,10 @@ export function commentCreatBtn({ getDto, postId }) {
       handleCreatComment({ dto: getDto(), postId });
     },
     styleProps: {
-      radius: 16,
+      radius: 30,
       padding: "7px 10px",
+      fontSize: "18",
+      fontWeight: "700",
     },
   });
 }
@@ -82,7 +92,7 @@ export function updateBtn({ getDto }) {
       handleUserUpdate({ dto: getDto() });
     },
     styleProps: {
-      radius: 6,
+      radius: 30,
       padding: "7px 10px",
       width: "100",
     },
@@ -97,7 +107,7 @@ export function updatePasswordBtn({ getDto }) {
       handleUserPasswordUpdate({ dto: getDto() });
     },
     styleProps: {
-      radius: 6,
+      radius: 30,
       padding: "7px 10px",
       width: "100",
     },
@@ -107,13 +117,14 @@ export function updatePasswordBtn({ getDto }) {
 //페이지 생성 버튼
 export function pageCreatBtn() {
   return Button({
-    text: "완료",
+    text: "작성",
     onClick: handlePostCreat,
     styleProps: {
-      radius: 6,
-      margin: "12px 0",
-      width: 70,
+      radius: "30",
+      margin: "10px 0",
+      width: 80,
       justifyContent: "center",
+      fontWeight: "500",
     },
   });
 }
@@ -126,7 +137,8 @@ export function pageUpdateBtn({ getDto, postId }) {
       handlePostUpdate({ dto: getDto(), postId });
     },
     styleProps: {
-      radius: 6,
+      margin: "10px 0",
+      radius: 30,
       margin: "12px 0",
       width: 70,
       justifyContent: "center",
@@ -157,17 +169,28 @@ export function quitBtn() {
 
 ///ActionButton
 export function editBtn(action) {
-  return ActionButton({
-    text: "수정",
+  return imgButton({
+    src: "public/icon/edit_icon.svg",
+    alt: "편집버튼",
     onClick: () => EditModal(action),
-    styleProps: {},
+    styleProps: {
+      width: 50,
+      height: 50,
+      margin: "5px",
+    },
   });
 }
 
 //삭제 -> 삭제 모달
 export function delBtn(action) {
-  return ActionButton({
-    text: "삭제",
+  return imgButton({
+    src: "public/icon/delete_icon.svg",
+    alt: "삭제버튼",
     onClick: () => DeleteModal(action),
+    styleProps: {
+      width: 50,
+      height: 50,
+      margin: "5px",
+    },
   });
 }

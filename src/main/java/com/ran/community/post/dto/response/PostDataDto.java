@@ -21,6 +21,7 @@ public class PostDataDto {
     private PostCountDto Count;//있는거 재활 가능하지루
     private List<CommentDataDto> comments ; //댓글 리스트
 
+    //liked는 엔티티 필드가 아니라 dto에서만 관리되어야한다고?
     private boolean liked;
 
     public PostDataDto(Post post) {
