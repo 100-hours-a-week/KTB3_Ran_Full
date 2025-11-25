@@ -52,7 +52,9 @@ public class Post extends AuditingEntity {
     @BatchSize(size = 50)
     private List<Comment> comments = new ArrayList<>();
 
-
+    //양방향 데베설계
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true )
+    private List<PostLike> postLikes;
 
 
     public Post(String title, String content, String imgUrl, User user) {
