@@ -1,5 +1,6 @@
-package com.ran.community.security;
+package com.ran.community.security.filter;
 
+import com.ran.community.security.TokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

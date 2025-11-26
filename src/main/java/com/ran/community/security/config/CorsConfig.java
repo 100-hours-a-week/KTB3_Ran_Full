@@ -1,4 +1,4 @@
-package com.ran.community.security;
+package com.ran.community.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -24,18 +24,20 @@ public class TokenProvider {
 
     private final long tokenValidity = 1000 * 60 * 60; // 1시간
 
-    public String createToken(String username) {
+    //이걸로 토큰 생성
+    public String createToken(String email) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + tokenValidity);
 
         return Jwts.builder()
-                .setSubject(username)        // username 저장
+                .setSubject(email)        // email
                 .setIssuedAt(now)            // 발급 시간
                 .setExpiration(expiration)   // 만료 시간
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
+    //사인
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
@@ -54,9 +56,9 @@ public class TokenProvider {
     }
 
     public Authentication getAuthentication(String token) {
-        String username = getUsername(token);
+        String email = getEmail(token);
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
         return new UsernamePasswordAuthenticationToken(
                 userDetails,
@@ -65,7 +67,7 @@ public class TokenProvider {
         );
     }
 
-    public String getUsername(String token) {
+    public String getEmail(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
