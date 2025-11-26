@@ -1,6 +1,7 @@
 package com.ran.community.user.controller;
 
 import com.ran.community.global.ApiResponse;
+import com.ran.community.security.LoginService;
 import com.ran.community.security.TokenProvider;
 import com.ran.community.user.dto.request.UserLoginDto;
 import com.ran.community.user.dto.request.UserPWUpdateDto;
@@ -8,6 +9,7 @@ import com.ran.community.user.dto.request.UserSignupFormDto;
 import com.ran.community.user.dto.request.UserInfoUpdatedDto;
 import com.ran.community.user.dto.response.TokenResponse;
 import com.ran.community.user.dto.response.UserDataResponseDTO;
+import com.ran.community.user.entity.User;
 import com.ran.community.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -16,28 +18,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private final TokenProvider tokenProvider;
-    private final AuthenticationManager authenticationManager;
+
     private UserService userService;
+    private LoginService loginService;
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     //DI
     @Autowired
-    public UserController(UserService userService, TokenProvider tokenProvider, AuthenticationManager authenticationManager) {
+    public UserController(UserService userService, LoginService loginService) {
         this.userService = userService;
-        this.tokenProvider = tokenProvider;
-        this.authenticationManager = authenticationManager;
+        this.loginService = loginService;
     }
 
 
@@ -51,15 +47,8 @@ public class UserController {
     //로그인 //
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<TokenResponse>> login(@Valid @RequestBody UserLoginDto userLoginDto){
-        UsernamePasswordAuthenticationToken authToken =
-                new UsernamePasswordAuthenticationToken(userLoginDto.getEmail(), userLoginDto.getPassword());
-
-        //현재 시도중인 사용자의 아이디
-        Authentication authentication = authenticationManager.authenticate(authToken);
-
-        String token = tokenProvider.createToken(authentication.getName());
-        TokenResponse tokenResponse = new TokenResponse(token);
-        return ApiResponse.success(tokenResponse,"login_success");
+        TokenResponse response = loginService.login(userLoginDto);
+        return ApiResponse.success(response,"login_success");
     }
 
     //회원 정보 조회 //

@@ -22,12 +22,22 @@ public class TokenProvider {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    private final long tokenValidity = 1000 * 60 * 60; // 1시간
+    private final long ACCESS_TOKEN_VALIDITY = 1000 * 60 * 1; // 30분
+    private final long REFRESH_TOKEN_VALIDITY = 1000L * 60 * 60 * 24 * 7; // 7일
+
+    public String createRefreshToken(String email) {
+        return Jwts.builder()
+                .setSubject(email)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_VALIDITY))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
 
     //이걸로 토큰 생성
     public String createToken(String email) {
         Date now = new Date();
-        Date expiration = new Date(now.getTime() + tokenValidity);
+        Date expiration = new Date(now.getTime() + ACCESS_TOKEN_VALIDITY);
 
         return Jwts.builder()
                 .setSubject(email)        // email
@@ -36,6 +46,7 @@ public class TokenProvider {
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
+
 
     //사인
     private Key getSigningKey() {

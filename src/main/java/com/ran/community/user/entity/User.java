@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.management.relation.Role;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class User extends AuditingEntity {
     @Column(name = "user_id")
     private long id;
 
-    @Column(length = 50, name = "email", nullable = false)
+    @Column(length = 50, name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(length = 10, name = "username", nullable = false)
@@ -30,6 +31,9 @@ public class User extends AuditingEntity {
 
     @Column(length = 255, name = "password", nullable = false)
     private String password;
+
+    @Column(length = 255, name="refreshToken")
+    private String refreshToken;
 
     //유저의 post
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
@@ -51,6 +55,10 @@ public class User extends AuditingEntity {
 
     public void updatedUserPassword(UserPWUpdateDto userPWUpdateDto){
         this.password = userPWUpdateDto.getPassword();
+    }
+
+    public void toRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
 }

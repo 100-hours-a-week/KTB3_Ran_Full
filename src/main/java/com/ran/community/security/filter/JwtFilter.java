@@ -13,35 +13,33 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final TokenProvider tokenProvider; // JWT 생성/검증 로직이 든 클래스
+    private final TokenProvider tokenProvider;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest req,
+                                    HttpServletResponse res,
+                                    FilterChain chain)
+            throws ServletException, IOException {
 
-        // 1. 헤더에서 토큰 추출
-        String token = resolveToken(request);
+        String token = resolveToken(req);
 
-        // 2. 토큰 유효성 검사
         if (token != null && tokenProvider.validateToken(token)) {
-            Authentication authentication = tokenProvider.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            Authentication auth = tokenProvider.getAuthentication(token);
+            SecurityContextHolder.getContext().setAuthentication(auth);
         }
 
-        // 4. 다음 필터로 진행
-        filterChain.doFilter(request, response);
+        chain.doFilter(req, res);
     }
 
     private String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
+        String bearer = request.getHeader("Authorization");
+
+        if (bearer != null && bearer.startsWith("Bearer ")) {
+            return bearer.substring(7);
         }
         return null;
     }
