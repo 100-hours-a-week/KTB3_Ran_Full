@@ -8,9 +8,11 @@ import com.ran.community.user.dto.request.UserSignupFormDto;
 import com.ran.community.user.dto.response.UserDataResponseDTO;
 import com.ran.community.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,12 +20,15 @@ public class UserService {
 
     //DI
     private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
+
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;//UserRepository를 인터페이스로 상속받고 있는 구현체들 중 필요한 클래스를 자동으로 생성자에 주입
+        this.passwordEncoder = passwordEncoder;
 
     }
 
@@ -43,8 +48,9 @@ public class UserService {
 //    }
 
     //유저 생성
+    //password encoding으로 변경
     private User createUser(UserSignupFormDto userSignupFormDto){
-        User user = new User(userSignupFormDto.getEmail(),userSignupFormDto.getUsername(),userSignupFormDto.getPassword());
+        User user = new User(userSignupFormDto.getEmail(),userSignupFormDto.getUsername(),passwordEncoder.encode(userSignupFormDto.getPassword()));
         return userRepository.save(user);
     }
 
@@ -136,4 +142,7 @@ public class UserService {
     }
 
 
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 }

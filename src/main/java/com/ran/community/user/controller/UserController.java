@@ -1,31 +1,43 @@
 package com.ran.community.user.controller;
 
 import com.ran.community.global.ApiResponse;
+import com.ran.community.security.TokenProvider;
 import com.ran.community.user.dto.request.UserLoginDto;
 import com.ran.community.user.dto.request.UserPWUpdateDto;
 import com.ran.community.user.dto.request.UserSignupFormDto;
 import com.ran.community.user.dto.request.UserInfoUpdatedDto;
+import com.ran.community.user.dto.response.TokenResponse;
 import com.ran.community.user.dto.response.UserDataResponseDTO;
 import com.ran.community.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.antlr.v4.runtime.Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
+    private final TokenProvider tokenProvider;
+    private final AuthenticationManager authenticationManager;
     private UserService userService;
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     //DI
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, TokenProvider tokenProvider, AuthenticationManager authenticationManager) {
         this.userService = userService;
+        this.tokenProvider = tokenProvider;
+        this.authenticationManager = authenticationManager;
     }
 
 
@@ -38,10 +50,16 @@ public class UserController {
 
     //로그인 //
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<UserDataResponseDTO>> login(@Valid @RequestBody UserLoginDto userLoginDto, HttpSession httpSession){
-        UserDataResponseDTO userDataResponseDTO = userService.login(userLoginDto);
-        httpSession.setAttribute("id", userDataResponseDTO.getId());
-        return ApiResponse.success(userDataResponseDTO,"login_success");
+    public ResponseEntity<ApiResponse<TokenResponse>> login(@Valid @RequestBody UserLoginDto userLoginDto){
+        UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(userLoginDto.getEmail(), userLoginDto.getPassword());
+
+        //현재 시도중인 사용자의 아이디
+        Authentication authentication = authenticationManager.authenticate(authToken);
+
+        String token = tokenProvider.createToken(authentication.getName());
+        TokenResponse tokenResponse = new TokenResponse(token);
+        return ApiResponse.success(tokenResponse,"login_success");
     }
 
     //회원 정보 조회 //
