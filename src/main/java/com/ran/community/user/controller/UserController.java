@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -82,5 +84,12 @@ public class UserController {
         UserDataResponseDTO userDataResponseDTO = userService.deletedUser(userId);
         return ApiResponse.success(userDataResponseDTO,"user_delete");
     }
+
+    //리플레시 토큰
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refresh(@RequestBody Map<String, String> map) {
+        return ApiResponse.success(loginService.refresh(map.get("refreshToken")),"reissued");
+    }
+
 
 }
