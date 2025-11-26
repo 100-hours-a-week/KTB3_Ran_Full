@@ -24,7 +24,6 @@ public class TokenProvider {
 
     private final long tokenValidity = 1000 * 60 * 60; // 1시간
 
-    // 🔹 JWT 생성
     public String createToken(String username) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + tokenValidity);
@@ -37,12 +36,10 @@ public class TokenProvider {
                 .compact();
     }
 
-    // 🔹 JWT 서명 키 생성
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
-    // 🔹 토큰 유효성 검사
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
@@ -56,7 +53,6 @@ public class TokenProvider {
         }
     }
 
-    // 🔹 토큰에서 Authentication 객체 반환
     public Authentication getAuthentication(String token) {
         String username = getUsername(token);
 
@@ -69,7 +65,6 @@ public class TokenProvider {
         );
     }
 
-    // 🔹 토큰에서 username 반환
     public String getUsername(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
