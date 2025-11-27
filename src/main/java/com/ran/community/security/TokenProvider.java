@@ -22,7 +22,7 @@ public class TokenProvider {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    private final long ACCESS_TOKEN_VALIDITY = 1000 * 60 * 1; // 30분
+    private final long ACCESS_TOKEN_VALIDITY = 1000 * 60 * 30; // 30분
     private final long REFRESH_TOKEN_VALIDITY = 1000L * 60 * 60 * 24 * 7; // 7일
 
     public String createRefreshToken(String email) {

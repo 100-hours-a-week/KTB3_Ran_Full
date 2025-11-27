@@ -9,6 +9,7 @@ import com.ran.community.user.dto.response.UserDataResponseDTO;
 import com.ran.community.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ public class UserService {
 
     //DI
     private UserRepository userRepository;
+    @Setter
     private PasswordEncoder passwordEncoder;
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
@@ -41,6 +43,12 @@ public class UserService {
     private User findById(long id){
         return userRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("유저를 찾을 수 없습니다."));
     }
+
+
+    private User findByUserEmail(String email){
+        return userRepository.findByEmail(email).orElseThrow(()-> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+    }
+
 
 //    //유저 객체 반환
 //    public User findByUser(long id){
@@ -113,36 +121,33 @@ public class UserService {
 
     //유저 정보 조회
     @Transactional
-    public UserDataResponseDTO getUserData(long id){
-        User user = findById(id);
+    public UserDataResponseDTO getUserData(String email){
+        User user = findByUserEmail(email);
         return new UserDataResponseDTO(user);
     }
 
     //유저 정보 수정
     @Transactional
-    public UserDataResponseDTO updateUser(Long id, UserInfoUpdatedDto userInfoUpdatedDto) {
-        User user = findById(id);
+    public UserDataResponseDTO updateUser(String email, UserInfoUpdatedDto userInfoUpdatedDto) {
+        User user = findByUserEmail(email);
         user.updatedUserInfo(userInfoUpdatedDto);
         return new UserDataResponseDTO(user);
     }
 
     //유저 비밀번호 수정
     @Transactional
-    public void updateUserPassword(Long id, UserPWUpdateDto userPWUpdateDto) {
-        User user = findById(id);
+    public void updateUserPassword(String email, UserPWUpdateDto userPWUpdateDto) {
+        User user = findByUserEmail(email);
         user.updatedUserPassword(userPWUpdateDto);
     }
 
     //유저 정보 삭제
     @Transactional
-    public UserDataResponseDTO deletedUser(Long id) {
-        User user = findById(id);
-        userRepository.deleteById(id);
+    public UserDataResponseDTO deletedUser(String email) {
+        User user = findByUserEmail(email);
+        userRepository.delete(user);
         return new UserDataResponseDTO(user);
     }
 
 
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
 }

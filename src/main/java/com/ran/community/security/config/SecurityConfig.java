@@ -5,6 +5,7 @@ import com.ran.community.security.CustomAuthenticationEntryPoint;
 import com.ran.community.security.filter.JwtFilter;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -41,7 +42,8 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users/login", "/users/signup").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/users/login", "/users/signup","users/refresh").permitAll()
                         .anyRequest().authenticated()
                 )
 

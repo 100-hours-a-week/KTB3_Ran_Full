@@ -14,6 +14,8 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,19 +36,20 @@ public class PostController {
 
     //게시물 생성 //
     @PostMapping()
-    public ResponseEntity<ApiResponse<PostDataDto>> postCreate(@Valid @RequestBody PostCreateFormDto postCreateFormDto, HttpSession httpSession) {
-        //userId의 userDto를 가져오기
-        long userId = (long) httpSession.getAttribute("id");
+    public ResponseEntity<ApiResponse<PostDataDto>> postCreate(@Valid @RequestBody PostCreateFormDto postCreateFormDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
         //로그인된 user의 객체도 함께 사용
-        PostDataDto postDataDto= postService.save(userId,postCreateFormDto);
+        PostDataDto postDataDto= postService.save(email,postCreateFormDto);
         return ApiResponse.created(postDataDto,"created_post");
     }
 
     //특정 게시물 조회 // fetch join O
     @GetMapping("/{postId}")
-    public ResponseEntity<ApiResponse<PostDataDto>> postRead(HttpSession httpSession, @PathVariable long postId){
-        long userId = (long) httpSession.getAttribute("id");
-        PostDataDto post = postService.findByPost(userId, postId);
+    public ResponseEntity<ApiResponse<PostDataDto>> postRead(@PathVariable long postId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        PostDataDto post = postService.findByPost(email, postId);
         return ApiResponse.success(post,"read_post");
     }
 
@@ -60,9 +63,11 @@ public class PostController {
     //전체 게시물 조회 //
     @GetMapping()
     public ResponseEntity<ApiResponse<List<PostGetDto>>> postsRead(){
-        //userId가 있을 경우에만 확인
-//        long userId = ((long) httpSession.getAttribute("id"));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        System.out.println("현재 요청 유저:" + email);
         List<PostGetDto> postList = postService.findAllPosts();
+        System.out.println("조회된 post 개수: " + postList.size());
         return ApiResponse.success(postList,"read_all_post");
     }
 
@@ -77,17 +82,19 @@ public class PostController {
 
     //게시물 수정 //
     @PatchMapping("/{postId}")
-    public ResponseEntity<ApiResponse<PostDataDto>> updatePost(HttpSession httpSession, @Valid @RequestBody PostUpdatedFormDto postUpdatedFormDto, @PathVariable long postId){
-        long userId = ((long) httpSession.getAttribute("id"));
-        PostDataDto postDataDto = postService.updatePost(postId,userId,postUpdatedFormDto);
+    public ResponseEntity<ApiResponse<PostDataDto>> updatePost(@Valid @RequestBody PostUpdatedFormDto postUpdatedFormDto, @PathVariable long postId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        PostDataDto postDataDto = postService.updatePost(postId,email,postUpdatedFormDto);
         return ApiResponse.success(postDataDto,"update_post");
     }
 
     //게시물 삭제 //
     @DeleteMapping("/{postId}")
-    public ResponseEntity<ApiResponse<PostDataDto>> deletePost(HttpSession httpSession,@PathVariable long postId){
-        long userId = ((long) httpSession.getAttribute("id"));
-        PostDataDto postDataDto = postService.deletePost(postId,userId);
+    public ResponseEntity<ApiResponse<PostDataDto>> deletePost(@PathVariable long postId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        PostDataDto postDataDto = postService.deletePost(postId,email);
         return ApiResponse.success(postDataDto,"delete_post");
     }
 
@@ -95,17 +102,19 @@ public class PostController {
     //좋아요를 분리해야되나?  ㅇㅇ 분리함.
     //특정 게시물의 좋아요 생성
     @PostMapping("/{postId}/likes")
-    public ResponseEntity<ApiResponse<LikeStateDto>> like(@PathVariable long postId, HttpSession session) {
-        long userId = (long) session.getAttribute("id");
-        LikeStateDto likeStateDto = likeService.saveLike(userId,postId);
+    public ResponseEntity<ApiResponse<LikeStateDto>> like(@PathVariable long postId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        LikeStateDto likeStateDto = likeService.saveLike(email,postId);
         return ApiResponse.created(likeStateDto,"like");
     }
 
     //특정 게시물의 좋아요 삭제
     @DeleteMapping("/{postId}/likes")
-    public ResponseEntity<ApiResponse<LikeStateDto>> unlike(@PathVariable long postId, HttpSession session) {
-        long userId = (long) session.getAttribute("id");
-        LikeStateDto likeStateDto = likeService.deleteByLike(postId,userId);
+    public ResponseEntity<ApiResponse<LikeStateDto>> unlike(@PathVariable long postId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        LikeStateDto likeStateDto = likeService.deleteByLike(postId, email);
         return ApiResponse.success(likeStateDto,"unlike");
 
     }
