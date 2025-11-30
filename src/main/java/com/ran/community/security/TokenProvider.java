@@ -22,27 +22,37 @@ public class TokenProvider {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    private final long tokenValidity = 1000 * 60 * 60; // 1시간
+    private final long ACCESS_TOKEN_VALIDITY = 1000 * 60 * 30; // 30분
+    private final long REFRESH_TOKEN_VALIDITY = 1000L * 60 * 60 * 24 * 7; // 7일
 
-    // 🔹 JWT 생성
-    public String createToken(String username) {
+    public String createRefreshToken(String email) {
+        return Jwts.builder()
+                .setSubject(email)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_VALIDITY))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    //이걸로 토큰 생성
+    public String createToken(String email) {
         Date now = new Date();
-        Date expiration = new Date(now.getTime() + tokenValidity);
+        Date expiration = new Date(now.getTime() + ACCESS_TOKEN_VALIDITY);
 
         return Jwts.builder()
-                .setSubject(username)        // username 저장
+                .setSubject(email)        // email
                 .setIssuedAt(now)            // 발급 시간
                 .setExpiration(expiration)   // 만료 시간
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // 🔹 JWT 서명 키 생성
+
+    //사인
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
-    // 🔹 토큰 유효성 검사
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
@@ -56,11 +66,10 @@ public class TokenProvider {
         }
     }
 
-    // 🔹 토큰에서 Authentication 객체 반환
     public Authentication getAuthentication(String token) {
-        String username = getUsername(token);
+        String email = getEmail(token);
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
         return new UsernamePasswordAuthenticationToken(
                 userDetails,
@@ -69,8 +78,7 @@ public class TokenProvider {
         );
     }
 
-    // 🔹 토큰에서 username 반환
-    public String getUsername(String token) {
+    public String getEmail(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()

@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,11 +46,15 @@ public class PostService {
         return userRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("유저를 찾을 수 없습니다."));
     }
 
+    private User findByUserEmail(String email){
+        return userRepository.findByEmail(email).orElseThrow(()-> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+    }
+
 
     //생성하기 Creat
     @Transactional
-    public PostDataDto save(long userId, PostCreateFormDto postCreateFormDto) {
-        User user = userRepository.findById(userId).orElseThrow(()-> new IllegalArgumentException("유저를 찾을 수 없습니다."));;
+    public PostDataDto save(String email, PostCreateFormDto postCreateFormDto) {
+        User user = findByUserEmail(email);
         Post post = new Post(postCreateFormDto.getTitle(),postCreateFormDto.getContent(),postCreateFormDto.getImgUrl(),user);
         return new PostDataDto(postRepository.save(post));
     }
@@ -76,13 +81,13 @@ public class PostService {
 
     //특정 게시물 상세 조회 + 댓글 조회까지 //fetch join 개선
     @Transactional
-    public PostDataDto findByPost(Long userId, Long postId) {
+    public PostDataDto findByPost(String email, Long postId) {
         Post post = findByPostIdWithCommentsAuthor(postId);
-        User user = findByUserId(userId);
+        User user = findByUserEmail(email);
         post.increaseViewCount(); //조회수 증가
         PostDataDto dto = new PostDataDto(post);
         // 로그인 한 유저가 있을 때만 좋아요 여부 체크
-        if (userId != null) {
+        if (email != null) {
             boolean liked = likeRepository.existsByUserAndPost(user, post);
             dto.doLiked(liked);
         }
@@ -97,8 +102,8 @@ public class PostService {
 //    }
 
     @Transactional
-    protected void validationUser(long userId, Post post) {
-        if(post.getUser().getId()!=userId){
+    protected void validationUser(String email, Post post) {
+        if(!Objects.equals(post.getUser().getEmail(), email)){
             throw new IllegalArgumentException("댓글을 수정할 권한이 없습니다.");
         }
     }
@@ -163,9 +168,9 @@ public class PostService {
 
     //게시물 수정
     @Transactional
-    public PostDataDto updatePost(long postId, long userId, PostUpdatedFormDto postUpdatedFormDto) {
+    public PostDataDto updatePost(long postId, String email, PostUpdatedFormDto postUpdatedFormDto) {
         Post post = findByPostId(postId);
-        validationUser(userId,post);
+        validationUser(email,post);
 
         post.updatePost(postUpdatedFormDto);
         return new PostDataDto(post);
@@ -174,9 +179,9 @@ public class PostService {
     //게시물 삭제
     //본인확인 먼저
     @Transactional
-    public PostDataDto deletePost(long postId, long userId) {
+    public PostDataDto deletePost(long postId, String email) {
         Post post = findByPostId(postId);
-        validationUser(userId,post);
+        validationUser(email,post);
 
         postRepository.deleteById(postId);
         return new PostDataDto(post);

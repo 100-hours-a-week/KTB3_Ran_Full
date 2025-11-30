@@ -33,6 +33,10 @@ public class LikeService {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
     }
+
+    private User findByUserEmail(String email){
+        return userRepository.findByEmail(email).orElseThrow(()-> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+    }
     
     //좋아요 Id로 찾기
     private PostLike findById(long id){
@@ -50,9 +54,9 @@ public class LikeService {
 
     //특정 게시물에서 좋아요 삭제
     @Transactional
-    public LikeStateDto deleteByLike(long postId, long userId){
+    public LikeStateDto deleteByLike(long postId,String email){
         Post post = findByPostId(postId);
-        User user = findByUserId(userId);
+        User user = findByUserEmail(email);
 
         boolean exist = likeRepository.existsByUserAndPost(user,post);
 
@@ -70,9 +74,9 @@ public class LikeService {
 
     //좋아요 생성
     @Transactional
-    public LikeStateDto saveLike(long userId, long postId) {
+    public LikeStateDto saveLike(String email, long postId) {
         Post post = findByPostId(postId);//게시물의 객체 가져오기
-        User user = findByUserId(userId);
+        User user = findByUserEmail(email);
 
         boolean exist = likeRepository.existsByUserAndPost(user,post);
 

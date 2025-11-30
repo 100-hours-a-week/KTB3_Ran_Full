@@ -1,31 +1,43 @@
 package com.ran.community.user.controller;
 
 import com.ran.community.global.ApiResponse;
+import com.ran.community.security.LoginService;
+import com.ran.community.security.TokenProvider;
 import com.ran.community.user.dto.request.UserLoginDto;
 import com.ran.community.user.dto.request.UserPWUpdateDto;
 import com.ran.community.user.dto.request.UserSignupFormDto;
 import com.ran.community.user.dto.request.UserInfoUpdatedDto;
+import com.ran.community.user.dto.response.TokenResponse;
 import com.ran.community.user.dto.response.UserDataResponseDTO;
+import com.ran.community.user.entity.User;
 import com.ran.community.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.antlr.v4.runtime.Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
+
     private UserService userService;
+    private LoginService loginService;
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     //DI
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, LoginService loginService) {
         this.userService = userService;
+        this.loginService = loginService;
     }
 
 
@@ -38,42 +50,52 @@ public class UserController {
 
     //로그인 //
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<UserDataResponseDTO>> login(@Valid @RequestBody UserLoginDto userLoginDto, HttpSession httpSession){
-        UserDataResponseDTO userDataResponseDTO = userService.login(userLoginDto);
-        httpSession.setAttribute("id", userDataResponseDTO.getId());
-        return ApiResponse.success(userDataResponseDTO,"login_success");
+    public ResponseEntity<ApiResponse<TokenResponse>> login(@Valid @RequestBody UserLoginDto userLoginDto){
+        TokenResponse response = loginService.login(userLoginDto);
+        return ApiResponse.success(response,"login_success");
     }
 
     //회원 정보 조회 //
     @GetMapping()
-    public ResponseEntity<?> userInfo(HttpSession session){
-        long userId = (long) session.getAttribute("id");
-        UserDataResponseDTO userDataResponseDTO = userService.getUserData(userId);
+    public ResponseEntity<?> userInfo(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        UserDataResponseDTO userDataResponseDTO = userService.getUserData(email);
         return ApiResponse.success(userDataResponseDTO,"read_user");
     }
 
     //회원 정보 수정 //이메일, 닉네임 수정 페이지
     @PatchMapping("/userInfo")
-    public ResponseEntity<?> userPatchInfo(HttpSession session,@RequestBody UserInfoUpdatedDto userInfoUpdatedDto){
-        long userId = (long) session.getAttribute("id");
-        UserDataResponseDTO userDataResponseDTO = userService.updateUser(userId, userInfoUpdatedDto);
+    public ResponseEntity<?> userPatchInfo(@RequestBody UserInfoUpdatedDto userInfoUpdatedDto){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        UserDataResponseDTO userDataResponseDTO = userService.updateUser(email, userInfoUpdatedDto);
         return ApiResponse.success(userDataResponseDTO,"user_update");
     }
 
     //회원 정보 수정 //비밀 번호
     @PatchMapping("/userPassword")
-    public ResponseEntity<?> userPatchPassword(HttpSession session,@RequestBody UserPWUpdateDto userPWUpdateDto){
-        long userId = (long) session.getAttribute("id");
-        userService.updateUserPassword(userId, userPWUpdateDto);
+    public ResponseEntity<?> userPatchPassword(@RequestBody UserPWUpdateDto userPWUpdateDto){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        userService.updateUserPassword(email, userPWUpdateDto);
         return ApiResponse.success("비밀번호가 변경되었습니다.","user_update");
     }
 
     //회원 탈퇴
     @DeleteMapping()
-    public ResponseEntity<?> userDelete(HttpSession session){
-        long userId = (long) session.getAttribute("id");
-        UserDataResponseDTO userDataResponseDTO = userService.deletedUser(userId);
+    public ResponseEntity<?> userDelete(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        UserDataResponseDTO userDataResponseDTO = userService.deletedUser(email);
         return ApiResponse.success(userDataResponseDTO,"user_delete");
     }
+
+    //리플레시 토큰
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refresh(@RequestBody Map<String, String> map) {
+        return ApiResponse.success(loginService.refresh(map.get("refreshToken")),"reissued");
+    }
+
 
 }

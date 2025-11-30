@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,16 +35,17 @@ public class CommentService {
         this.userRepository = userRepository;
     }
 
+    private User findByUserEmail(String email){
+        return userRepository.findByEmail(email).orElseThrow(()-> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+    }
+
 
     //식별자로 찾기
     private Post findByPostId(Long id) {
         return postRepository.findById(id).orElseThrow(()->new IllegalArgumentException("게시물을 찾을 수 없습니다."));
     }
 
-    //식별자로 유저 찾기
-    private User findByUserId(long id){
-        return userRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("유저를 찾을 수 없습니다."));
-    }
+
 
     //식별자로 댓글 찾기
     private Comment findByCommentId(long id){
@@ -53,8 +55,8 @@ public class CommentService {
     //private
     //본인이 작성한 댓글만 상태를 변경할 수 있음.(본인확인)
     //해당 클래스 안에서만 유의미한 메서드이기 때문에 다른 클래스에서 검증로직을 무분별하게 사용할 수 있음.
-    private void validationUser(long userId, long postId, Comment comment){
-        if(comment.getUser().getId()!=userId || comment.getPost().getId()!=postId){
+    private void validationUser(String email, long postId, Comment comment){
+        if(!Objects.equals(comment.getUser().getEmail(), email) || comment.getPost().getId()!=postId){
             throw new IllegalArgumentException("댓글을 수정할 권한이 없습니다.");
         }
     }
@@ -74,8 +76,8 @@ public class CommentService {
 
     //댓글 생성
     @Transactional
-    public CommentDataDto commentCreate(long userId, long postId, CommentInputDto commentInputDto) {
-        User user = findByUserId(userId);
+    public CommentDataDto commentCreate(String email, long postId, CommentInputDto commentInputDto) {
+        User user = findByUserEmail(email);
         Post post = findByPostId(postId);
         post.increaseCommentCount();//댓글 갯수 증가
 
@@ -85,10 +87,10 @@ public class CommentService {
 
     //댓글 수정
     @Transactional
-    public CommentDataDto commentUpdate(long userId, long postId, long commentId, CommentInputDto commentInputDto) {
+    public CommentDataDto commentUpdate(String email, long postId, long commentId, CommentInputDto commentInputDto) {
         //내껏만 가능
         Comment comment = findByCommentId(commentId);
-        validationUser(userId,postId,comment);//수정권한 확인
+        validationUser(email,postId,comment);//수정권한 확인
 
         CommentUpdatedFormDto commentUpdatedFormDto = new CommentUpdatedFormDto(commentInputDto.getContent());
         comment.updateComment(commentUpdatedFormDto);
@@ -98,10 +100,10 @@ public class CommentService {
 
     //댓글 삭제
     @Transactional
-    public CommentDataDto commentDelete(long userId, long postId, long commentId) {
+    public CommentDataDto commentDelete(String email, long postId, long commentId) {
         Comment comment = findByCommentId(commentId);
 
-        validationUser(userId,postId,comment);//수정권한 확인
+        validationUser(email,postId,comment);//수정권한 확인
 
         Post post = findByPostId(postId);
         post.decreaseCommentCount();//댓글 갯수 감소
