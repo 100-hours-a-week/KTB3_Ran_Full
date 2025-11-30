@@ -209,3 +209,6 @@ src/main/java/com/ran/community
 ---
 
 # 5. TroubleShooting
+
+- [[TroubleShooting]`findById`로 엔티티를 통째로 가져오는 것이 과연 문제일까?](troubleShooting/jpa-query-performance-findbyid-vs-jpql.md)
+- 
