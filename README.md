@@ -210,5 +210,6 @@ src/main/java/com/ran/community
 
 # 5. TroubleShooting
 
-- [[TroubleShooting]`findById`로 엔티티를 통째로 가져오는 것이 과연 문제일까?](troubleShooting/jpa-query-performance-findbyid-vs-jpql.md)
-- 
+- [[TroubleShooting] `findById`로 엔티티를 통째로 가져오는 것이 과연 문제일까?](troubleShooting/jpa-query-performance-findbyid-vs-jpql.md)
+- [[TroubleShooting] 게시글 카운트 조회 & 좋아요 카운트 저장 방식 개선](troubleShooting/jpa-count-query-optimization.md)
+- [[TroubleShooting] Repository의 문제점 : ISP](troubleShooting/ISP.md)
