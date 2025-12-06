@@ -62,14 +62,14 @@ public class PostController {
 
     //전체 게시물 조회 //
     @GetMapping()
-    public ResponseEntity<ApiResponse<List<PostGetDto>>> postsRead(){
+    public ResponseEntity<ApiResponse<List<PostGetDto>>> postsRead() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        System.out.println("현재 요청 유저:" + email);
-        List<PostGetDto> postList = postService.findAllPosts();
-        System.out.println("조회된 post 개수: " + postList.size());
-        return ApiResponse.success(postList,"read_all_post");
+
+        List<PostGetDto> postList = postService.findAllPosts(email);
+        return ApiResponse.success(postList, "read_all_post");
     }
+
 
 //    //전체 게시물 조회 // fetch join 없이 부하 테스트 용
 //    @GetMapping("/test")
