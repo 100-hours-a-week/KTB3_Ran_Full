@@ -21,6 +21,7 @@ public class PostGetDto {
 
     private LocalDateTime  createdAt;
 
+    private boolean liked;
 
 
     public PostGetDto(Post post) {
@@ -33,6 +34,10 @@ public class PostGetDto {
         this.likeCount = post.getLikeCount();
         this.viewCount = post.getViewCount();
         this.createdAt = post.getCreated_at();
+    }
+
+    public void doLiked(boolean liked){
+        this.liked = liked;
     }
 
 }

@@ -24,6 +24,7 @@ public class PostDataDto {
     //liked는 엔티티 필드가 아니라 dto에서만 관리되어야한다고?
     private boolean liked;
 
+
     public PostDataDto(Post post) {
         this.id = post.getId();
         this.title = post.getTitle();
