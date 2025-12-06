@@ -116,10 +116,23 @@ public class PostService {
 //    }
 
     @Transactional
-    public List<PostGetDto> findAllPosts() {
-        List<Post> postList = findPostAll();
-        return postList.stream().map(post -> new PostGetDto(post)).collect(Collectors.toList());
+    public List<PostGetDto> findAllPosts(String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("유저 없음"));
+
+        List<Post> posts = postRepository.findAllWithAuthorOrderByCreatedAtDesc();
+
+        return posts.stream().map(post -> {
+            PostGetDto dto = new PostGetDto(post);
+            boolean liked = likeRepository.existsByPostIdAndUserId(post.getId(), user.getId());
+            dto.doLiked(liked);
+            return dto;
+        }).collect(Collectors.toList());
     }
+
+
+
 
 
     //좋아요, 조회, 댓글 갯수 조회
