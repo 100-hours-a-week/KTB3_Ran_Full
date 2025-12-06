@@ -13,6 +13,8 @@ import com.ran.community.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -61,14 +63,17 @@ public class PostController {
 //    }
 
     //전체 게시물 조회 //
-    @GetMapping()
-    public ResponseEntity<ApiResponse<List<PostGetDto>>> postsRead() {
+    @GetMapping
+    public ResponseEntity<ApiResponse<Page<PostGetDto>>> postsRead(
+            Pageable pageable
+    ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
 
-        List<PostGetDto> postList = postService.findAllPosts(email);
+        Page<PostGetDto> postList = postService.findAllPosts(email, pageable);
         return ApiResponse.success(postList, "read_all_post");
     }
+
 
 
 //    //전체 게시물 조회 // fetch join 없이 부하 테스트 용

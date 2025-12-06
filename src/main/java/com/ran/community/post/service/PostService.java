@@ -1,7 +1,6 @@
 package com.ran.community.post.service;
 
 import com.ran.community.comment.dto.response.CommentCountDto;
-import com.ran.community.comment.entity.Comment;
 import com.ran.community.like.dto.response.LikeCountDto;
 import com.ran.community.like.repository.LikeRepository;
 import com.ran.community.post.dto.request.PostUpdatedFormDto;
@@ -11,15 +10,16 @@ import com.ran.community.post.entity.Post;
 import com.ran.community.post.repository.PostRepository;
 import com.ran.community.user.entity.User;
 import com.ran.community.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -115,21 +115,22 @@ public class PostService {
 //        return postList.stream().map(post -> new PostDto(post)).collect(Collectors.toList());
 //    }
 
-    @Transactional
-    public List<PostGetDto> findAllPosts(String email) {
+    @Transactional(readOnly = true)
+    public Page<PostGetDto> findAllPosts(String email, Pageable pageable) {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("유저 없음"));
 
-        List<Post> posts = postRepository.findAllWithAuthorOrderByCreatedAtDesc();
+        Page<Post> posts = postRepository.findAllWithAuthorOrderByCreatedAtDesc(pageable);
 
-        return posts.stream().map(post -> {
+        return posts.map(post -> {
             PostGetDto dto = new PostGetDto(post);
             boolean liked = likeRepository.existsByPostIdAndUserId(post.getId(), user.getId());
             dto.doLiked(liked);
             return dto;
-        }).collect(Collectors.toList());
+        });
     }
+
 
 
 
