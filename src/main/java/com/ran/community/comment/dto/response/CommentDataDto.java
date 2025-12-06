@@ -13,15 +13,10 @@ public class CommentDataDto {
     private String author;
     private LocalDateTime created_at;
 
-    public CommentDataDto(long commentId, String content, long authorId) {
-        this.commentId = commentId;
-        this.content = content;
-        this.authorId = authorId;
-    }
-
     public CommentDataDto(Comment comment) {
         this.commentId = comment.getCommentId();
         this.content = comment.getContent();
+        this.authorId = comment.getUser().getId(); // ← 빠진 부분 추가
         this.author = comment.getUser().getUsername();
         this.created_at = comment.getCreated_at();
     }

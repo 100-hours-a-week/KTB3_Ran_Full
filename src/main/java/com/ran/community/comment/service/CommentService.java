@@ -71,7 +71,9 @@ public class CommentService {
     @Transactional
     public List<CommentDataDto> commentListByPostId(long postId) {
         List<Comment> comments = findByPost_Id(postId);
-        return comments.stream().map(comment -> new CommentDataDto(comment.getCommentId(),comment.getContent(),comment.getUser().getId())).collect(Collectors.toList());
+        return comments.stream()
+                .map(CommentDataDto::new)
+                .collect(Collectors.toList());
     }
 
     //댓글 생성
