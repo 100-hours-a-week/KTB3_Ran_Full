@@ -20,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequestMapping("/posts")
@@ -63,14 +64,27 @@ public class PostController {
 //    }
 
     //전체 게시물 조회 //
+//    @GetMapping
+//    public ResponseEntity<ApiResponse<Page<PostGetDto>>> postsRead(
+//            Pageable pageable
+//    ) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String email = authentication.getName();
+//
+//        Page<PostGetDto> postList = postService.findAllPosts(email, pageable);
+//        return ApiResponse.success(postList, "read_all_post");
+//    }
+
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<PostGetDto>>> postsRead(
-            Pageable pageable
+    public ResponseEntity<ApiResponse<CursorResponse<PostGetDto>>> postsRead(
+            @RequestParam(required = false) LocalDateTime cursor,
+            @RequestParam(defaultValue = "10") int size
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
 
-        Page<PostGetDto> postList = postService.findAllPosts(email, pageable);
+        CursorResponse<PostGetDto> postList = postService.findAllPosts(email, cursor, size);
+
         return ApiResponse.success(postList, "read_all_post");
     }
 

@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,5 +64,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM Post p JOIN FETCH p.user ORDER BY p.created_at DESC")
     Page<Post> findAllWithAuthorOrderByCreatedAtDesc(Pageable pageable);
+
+    @Query("""
+    SELECT p FROM Post p
+    WHERE (:cursor IS NULL OR p.created_at < :cursor)
+    ORDER BY p.created_at DESC
+""")
+    List<Post> findNextPosts(@Param("cursor") LocalDateTime cursor, Pageable pageable);
+
+
 
 }

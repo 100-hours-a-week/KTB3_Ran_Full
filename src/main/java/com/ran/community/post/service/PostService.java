@@ -10,6 +10,7 @@ import com.ran.community.post.entity.Post;
 import com.ran.community.post.repository.PostRepository;
 import com.ran.community.user.entity.User;
 import com.ran.community.user.repository.UserRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -115,21 +117,46 @@ public class PostService {
 //        return postList.stream().map(post -> new PostDto(post)).collect(Collectors.toList());
 //    }
 
+//    @Transactional(readOnly = true)
+//    public Page<PostGetDto> findAllPosts(String email, Pageable pageable) {
+//
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new RuntimeException("유저 없음"));
+//
+//        Page<Post> posts = postRepository.findAllWithAuthorOrderByCreatedAtDesc(pageable);
+//
+//        return posts.map(post -> {
+//            PostGetDto dto = new PostGetDto(post);
+//            boolean liked = likeRepository.existsByPostIdAndUserId(post.getId(), user.getId());
+//            dto.doLiked(liked);
+//            return dto;
+//        });
+//    }
+
     @Transactional(readOnly = true)
-    public Page<PostGetDto> findAllPosts(String email, Pageable pageable) {
+    public CursorResponse<PostGetDto> findAllPosts(String email, LocalDateTime cursor, int size) {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("유저 없음"));
 
-        Page<Post> posts = postRepository.findAllWithAuthorOrderByCreatedAtDesc(pageable);
+        Pageable pageable = PageRequest.of(0, size);
 
-        return posts.map(post -> {
+        List<Post> posts = postRepository.findNextPosts(cursor, pageable);
+
+        List<PostGetDto> dtoList = posts.stream().map(post -> {
             PostGetDto dto = new PostGetDto(post);
             boolean liked = likeRepository.existsByPostIdAndUserId(post.getId(), user.getId());
             dto.doLiked(liked);
             return dto;
-        });
+        }).toList();
+
+        LocalDateTime nextCursor = posts.isEmpty()
+                ? null
+                : posts.get(posts.size() - 1).getCreated_at();
+
+        return CursorResponse.of(dtoList, nextCursor);
     }
+
 
 
 
