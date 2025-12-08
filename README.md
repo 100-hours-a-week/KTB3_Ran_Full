@@ -1,34 +1,29 @@
 # 📘 ONE_LINE
 
-**Spring Boot 3 + JWT 인증 기반 커뮤니티 REST API 서버**
+**Spring Boot 3 + JWT 기반 커뮤니티 REST API 서버**
 
-Vanilla JavaScript로 만든 SPA 프론트엔드와 통신하며
-게시글, 댓글, 좋아요, 사용자 인증을 책임지는 백엔드입니다.
+Vanilla JavaScript 기반 SPA 및 React 클라이언트와 통신하며 게시글, 댓글, 좋아요, 인증 기능을 제공하는 백엔드 API 서버입니다.
 
-React/Vue 없이 구성된 FE가 안정적으로 동작하도록
-**API 응답 규약 · 토큰 플로우 · 카운트 캐싱 로직을 설계했습니다.**
+프론트엔드 환경과 무관하게 일관된 동작을 보장하기 위해 **API 응답 규약, JWT 토큰 처리 흐름, 카운트 캐싱 구조**를 설계했습니다.
 
 ---
+
 
 # 1. 🚀 Project Overview
 
 본 프로젝트는 **Spring Boot 3.5 / Java 21 기반의 REST API 서버**로,
-Controller → Service → Repository의 계층을 명확히 분리하여 유지보수성과 테스트 용이성을 강화했습니다.
 
-- JPA 엔티티(User/Post/Comment/PostLike)는 공통 `AuditingEntity`를 확장하여
-  생성/수정 시점을 자동 기록합니다.
-- 게시글 통계(view/like/comment count)는 엔티티 컬럼에 **즉시 캐싱**하고
-  FE는 `PostCountDto` 등으로 **한 번에 정보를 조회**하도록 설계했습니다.
-- 모든 응답은 `ApiResponse` 래퍼로 감싸
-  `{status, code, message, data}` 포맷을 강제합니다.
-- 인증은 **JWT 기반**이며, 로그인/토큰 재발급/보호된 경로 관리를 분리해
-  완전한 Stateless 환경을 구성했습니다.
+Controller → Service → Repository 계층을 분리하여 도메인 로직과 인프라 의존성을 명확히 구분했습니다.
 
-### Intro
 
-- FE가 자체 구현한 SPA Router를 사용하므로, 서버는 **순수 JSON API + 명확한 message code**를 제공합니다.
-- Repository(Interface)와 구현체(JPA / InMemory)를 분리해
-  테스트 환경/부하 테스트에서 저장소를 쉽게 교체할 수 있습니다.
+- 전 엔티티(User, Post, Comment, PostLike)는 `AuditingEntity`를 상속하여 생성·수정 시간을 자동 기록
+- 게시글 통계(view/like/comment)는 엔티티 컬럼에 **즉시 반영하여 캐싱**
+
+  → 클라이언트는 `PostCountDto` 등 통합된 응답으로 한번에 조회 가능
+
+- 모든 응답을 `ApiResponse`로 래핑해 `{status, code, message, data}` 구조를 유지
+- JWT 기반 인증으로 Access/Refresh 토큰을 분리하여 Stateless 환경 구성
+- Repository 인터페이스와 구현체(JPA / InMemory)를 분리하여 테스트 유연성 제공
 
 ---
 
@@ -36,19 +31,18 @@ Controller → Service → Repository의 계층을 명확히 분리하여 유지
 
 ### 🔶 Language & Runtime
 
-- Java 21 (Gradle Toolchain)
-- Gradle 8.x
-- Lombok 사용 (보일러플레이트 최소화)
+- Java 21 
+- Gradle 8
+- Lombok
 
 ---
 
-### 🔶 Application Modules
+## 🔶 Application Modules
 
-- `spring-boot-starter-web` — REST 컨트롤러
-- `spring-boot-starter-validation` — DTO 검증
-- `spring-boot-starter-data-jpa` — 영속성 계층
-- `springdoc-openapi-starter-webmvc-ui` — Swagger UI 자동 문서화
-- Thymeleaf — 에러 템플릿/관리 콘솔 테스트 용도
+- `spring-boot-starter-web` – REST 컨트롤러
+- `spring-boot-starter-validation` – DTO 검증
+- `spring-boot-starter-data-jpa` – JPA/Hibernate
+- `springdoc-openapi` – Swagger UI 문서화
 
 ---
 
@@ -94,9 +88,9 @@ Client
 
 - **CorsFilter**: FE 오리진 허용, Preflight OPTIONS 전체 허용
 - **JwtFilter**: Bearer 토큰 추출 → 검증 → `SecurityContext` 주입
-- **Controller**: 인증 정보(email)를 받아 서비스 호출
-- **Service**: 트랜잭션에서 엔티티 수정 및 DTO 투영
-- **Repository**: fetch join, batch fetch 전략
+- **Controller**: 인증 정보(email)를 기준으로 Service 호출
+- **Service**: 트랜잭션 내에서 엔티티 조작 및 DTO 변환 처리
+- **Repository**: fetch join + batch fetch 전략으로 조회 최적화
 
 ---
 
@@ -109,7 +103,7 @@ Client
 | **Comment**  | 내용·작성자·게시글, 수정 시간 Auditing                        |
 | **PostLike** | User–Post UniqueConstraint로 중복 좋아요 방지                 |
 
-### 주요 전략
+### 모델링 전략
 
 - 모든 엔티티는 `AuditingEntity` 확장
 - 성능 최적화:
